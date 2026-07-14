@@ -4,18 +4,18 @@
   "reel": "https://vimeo.com/1129663245/996ec6f80a",
   "projects": [
     {
+      "title": "New Single — Video One",
+      "youtube": "",
+      "released": false,
+      "img": "assets/u-20260714040902-679.jpg",
+      "desc": "Devin’s next single, shot in a sun-soaked mid-century house above Los Angeles. Full video and story premiere soon."
+    },
+    {
       "title": "New Single — DESERT COLD ",
       "youtube": "",
       "released": false,
       "img": "assets/u-20260714041011-366.jpg",
       "desc": "A top-down drive through the canyons at golden hour. Full video and story premiere soon."
-    },
-    {
-      "title": "New Single ",
-      "youtube": "",
-      "released": false,
-      "img": "assets/u-20260714040902-679.jpg",
-      "desc": "Devin’s next single, shot in a sun-soaked mid-century house above Los Angeles. Full video and story premiere soon."
     }
   ],
   "releases": [
@@ -104,6 +104,11 @@
   ],
   "press": [
     [
+      "Naluda Magazine",
+      "Interview with actress and singer Devin Cecchetto",
+      "https://www.naludamagazine.com/interview-with-actress-and-singer-devin-cecchetto/"
+    ],
+    [
       "Drive Music Media",
       "From a personal story to a summer track",
       "https://drivemusicmedia.co.uk/ships-in-the-night-and-so-obvious-devin-cecchetto-from-a-personal-story-to-a-summer-track-03-08-2025/"
@@ -122,11 +127,6 @@
       "Stay2uned",
       "Behind the scenes with Devin Cecchetto — exploring The Way Home",
       "https://stay2uned.com/2025/02/06/behind-the-scenes-with-devin-cecchetto-exploring-the-way-home-a-stay2uned-exclusive-interview/"
-    ],
-    [
-      "Naluda Magazine",
-      "Interview with actress and singer Devin Cecchetto",
-      "https://www.naludamagazine.com/interview-with-actress-and-singer-devin-cecchetto/"
     ]
   ],
   "posts": [],
