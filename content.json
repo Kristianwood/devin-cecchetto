@@ -150,18 +150,18 @@
     ]
   ],
   "montage": [
+    "assets/imdb-21.jpg",
     "assets/imdb-17.jpg",
     "assets/imdb-05.jpg",
-    "assets/imdb-21.jpg",
-    "assets/imdb-47.jpg",
-    "assets/imdb-16.jpg",
-    "assets/imdb-08.jpg",
-    "assets/imdb-15.jpg",
     "assets/imdb-18.jpg",
+    "assets/imdb-15.jpg",
+    "assets/imdb-08.jpg",
     "assets/imdb-31.jpg",
     "assets/imdb-44.jpg",
+    "assets/imdb-36.jpg",
+    "assets/imdb-16.jpg",
     "assets/imdb-43.jpg",
-    "assets/imdb-36.jpg"
+    "assets/imdb-47.jpg"
   ],
   "actingHero": "assets/imdb-04.jpg",
   "aboutPortrait": "assets/u-20260714040836-236.jpg"
