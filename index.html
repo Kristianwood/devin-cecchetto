@@ -81,10 +81,12 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
 .acting-hero{max-width:820px;margin:50px auto 60px;animation:riseUp 1s ease .5s both}
 .acting-hero .ph{aspect-ratio:16/7;border-radius:18px;overflow:hidden;box-shadow:0 30px 70px rgba(74,60,50,.18);background-size:cover;background-position:center 30%}
 .credits{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-.credit{background:#f7f2ec;border:1px solid #e3d6c9;border-radius:16px;padding:26px 26px 24px;transition:transform .45s cubic-bezier(.2,.8,.3,1), box-shadow .45s;animation:riseUp .9s ease both}
+.credit{display:block;background:#f7f2ec;border:1px solid #e3d6c9;border-radius:16px;padding:26px 26px 24px;transition:transform .45s cubic-bezier(.2,.8,.3,1), box-shadow .45s;animation:riseUp .9s ease both}
 .credit:hover{transform:translateY(-8px);box-shadow:0 22px 44px rgba(74,60,50,.16)}
-.credit h3{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px}
+.credit h3{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;color:#4a3c32}
 .credit p{margin:8px 0 0;font-size:13px;letter-spacing:.06em;color:#8a6f5f}
+.credit .go{margin:14px 0 0;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#b9a49a;transition:color .3s}
+.credit:hover .go{color:#8a6f5f}
 .imdb-cta{text-align:center;margin-top:44px;animation:riseUp .9s ease both}
 .imdb-cta a{display:inline-block;padding:12px 28px;border-radius:999px;border:1px solid #d9c2b8;font-size:12px;letter-spacing:.24em;text-transform:uppercase;transition:transform .4s}
 .imdb-cta a:hover{transform:translateY(-4px)}

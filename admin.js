@@ -310,8 +310,9 @@
     redrawCredits = listEditor('credits', content.credits, function (box, c) {
       box.appendChild(field('Title', arrInput(c, 0)));
       box.appendChild(field('Role / network / year', arrInput(c, 1)));
+      box.appendChild(field('IMDb page of the show/movie (optional — makes the card clickable)', arrInput(c, 2, { type: 'url', placeholder: 'https://www.imdb.com/title/tt…' })));
     });
-    $('add-credit').onclick = function () { content.credits.push(['', '']); markDirty(); redrawCredits(); };
+    $('add-credit').onclick = function () { content.credits.push(['', '', '']); markDirty(); redrawCredits(); };
 
     redrawPress = listEditor('press', content.press, function (box, q) {
       box.appendChild(field('Outlet', arrInput(q, 0)));

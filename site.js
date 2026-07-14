@@ -106,10 +106,13 @@
     var wrap = document.getElementById('credits');
     wrap.innerHTML = '';
     DATA.credits.forEach(function (c, i) {
-      var d = el('div', { 'class': 'credit' });
+      var d = c[2]
+        ? el('a', { 'class': 'credit', href: c[2], target: '_blank', rel: 'noopener' })
+        : el('div', { 'class': 'credit' });
       d.style.animationDelay = (0.45 + i * 0.09).toFixed(2) + 's';
       d.appendChild(el('h3', null, esc(c[0])));
       d.appendChild(el('p', null, esc(c[1])));
+      if (c[2]) d.appendChild(el('p', { 'class': 'go' }, 'IMDb &rarr;'));
       wrap.appendChild(d);
     });
     var imdb = document.getElementById('imdb-link');
