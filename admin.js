@@ -307,6 +307,25 @@
       markDirty(); redrawPosts();
     };
 
+    if (!content.timeline) content.timeline = [];
+    var redrawTimeline = listEditor('timeline-ed', content.timeline, function (box, t) {
+      box.appendChild(field('Year', textInput(t, 'year', { placeholder: '2026' })));
+      box.appendChild(field('Title', textInput(t, 'title')));
+      box.appendChild(field('Text', h('textarea', { rows: 3, value: t.text || '', oninput: function (e) { t.text = e.target.value; markDirty(); } })));
+      var thumb = h('div', { 'class': 'thumb', style: 'background-image:url(' + JSON.stringify(t.img ? photoUrl(t.img) : '') + ')' });
+      box.appendChild(h('div', { 'class': 'slot', style: 'margin-top:12px' }, [
+        thumb,
+        h('span', { 'class': 'name', text: t.img ? 'Photo' : 'No photo (optional)' }),
+        h('button', { 'class': 'small', text: 'Change', onclick: function () { pickPhoto('wide', function (path) { t.img = path; markDirty(); thumb.style.backgroundImage = 'url(' + JSON.stringify(photoUrl(path)) + ')'; }); } }),
+        h('button', { 'class': 'small', text: 'None', onclick: function () { t.img = ''; markDirty(); thumb.style.backgroundImage = ''; } })
+      ]));
+      box.appendChild(field('Photo caption (e.g. the production it is from)', textInput(t, 'cap', { placeholder: 'In The Way Home (2023)' })));
+    });
+    $('add-timeline').onclick = function () {
+      content.timeline.push({ year: '', title: '', text: '', img: '', cap: '' });
+      markDirty(); redrawTimeline();
+    };
+
     redrawCredits = listEditor('credits', content.credits, function (box, c) {
       box.appendChild(field('Title', arrInput(c, 0)));
       box.appendChild(field('Role / network / year', arrInput(c, 1)));
