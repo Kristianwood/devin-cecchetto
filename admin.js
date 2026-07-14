@@ -603,32 +603,32 @@
   /* Primary path: Git Data API — one commit for everything.
      Fallback: Contents API (one commit per file) — some token types can
      read/write contents but are not allowed on the git-data endpoints. */
-  function publishGitData() {
-    var parentSha, baseTree;
+  function uploadBlobs() {
+    var blobs = [];
+    blobs.push(gh('/git/blobs', {
+      method: 'POST',
+      body: JSON.stringify({ content: b64EncodeUnicode(JSON.stringify(content, null, 2) + '\n'), encoding: 'base64' })
+    }).then(function (b) { return { path: 'content.json', mode: '100644', type: 'blob', sha: b.sha }; }));
+    Object.keys(uploads).forEach(function (p) {
+      log('uploading ' + p);
+      blobs.push(gh('/git/blobs', {
+        method: 'POST',
+        body: JSON.stringify({ content: uploads[p].b64, encoding: 'base64' })
+      }).then(function (b) { return { path: p, mode: '100644', type: 'blob', sha: b.sha }; }));
+    });
+    Object.keys(deletes).forEach(function (p) {
+      log('deleting ' + p);
+      blobs.push(Promise.resolve({ path: p, mode: '100644', type: 'blob', sha: null }));
+    });
+    return Promise.all(blobs);
+  }
+  function commitEntries(entries) {
+    var parentSha;
     return gh('/git/ref/heads/' + BRANCH).then(function (ref) {
       parentSha = ref.object.sha;
       return gh('/git/commits/' + parentSha);
     }).then(function (commit) {
-      baseTree = commit.tree.sha;
-      var blobs = [];
-      blobs.push(gh('/git/blobs', {
-        method: 'POST',
-        body: JSON.stringify({ content: b64EncodeUnicode(JSON.stringify(content, null, 2) + '\n'), encoding: 'base64' })
-      }).then(function (b) { return { path: 'content.json', mode: '100644', type: 'blob', sha: b.sha }; }));
-      Object.keys(uploads).forEach(function (p) {
-        log('uploading ' + p);
-        blobs.push(gh('/git/blobs', {
-          method: 'POST',
-          body: JSON.stringify({ content: uploads[p].b64, encoding: 'base64' })
-        }).then(function (b) { return { path: p, mode: '100644', type: 'blob', sha: b.sha }; }));
-      });
-      Object.keys(deletes).forEach(function (p) {
-        log('deleting ' + p);
-        blobs.push(Promise.resolve({ path: p, mode: '100644', type: 'blob', sha: null }));
-      });
-      return Promise.all(blobs);
-    }).then(function (entries) {
-      return gh('/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: baseTree, tree: entries }) });
+      return gh('/git/trees', { method: 'POST', body: JSON.stringify({ base_tree: commit.tree.sha, tree: entries }) });
     }).then(function (tree) {
       return gh('/git/commits', {
         method: 'POST',
@@ -636,6 +636,24 @@
       });
     }).then(function (commit) {
       return gh('/git/refs/heads/' + BRANCH, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
+    });
+  }
+  function publishGitData() {
+    /* blobs are branch-independent; if the branch moves mid-publish
+       (another editor, or a developer push), retry just the commit step
+       against the fresh head — photos are not re-uploaded */
+    return uploadBlobs().then(function (entries) {
+      var attempt = 0;
+      function tryCommit() {
+        return commitEntries(entries).catch(function (e) {
+          if (attempt++ < 3 && /fast forward|422/i.test(e.message)) {
+            log('site changed while publishing — retrying with the latest version (' + attempt + '/3)');
+            return tryCommit();
+          }
+          throw e;
+        });
+      }
+      return tryCommit();
     });
   }
   function publishContentsApi() {
