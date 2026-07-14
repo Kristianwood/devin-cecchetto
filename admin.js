@@ -162,11 +162,69 @@
   function renderMontageGrid() {
     var g = $('montage-grid'); g.innerHTML = '';
     content.montage.forEach(function (src, i) {
-      var tile = h('div', { 'class': 'mont' }, [
-        h('div', { 'class': 'im', style: 'background-image:url(' + JSON.stringify(photoUrl(src)) + ')', title: 'Click to change', onclick: function () { pickPhoto('tile', function (p) { content.montage[i] = p; markDirty(); renderMontageGrid(); }); } }),
+      var tile = h('div', { 'class': 'mont', 'data-idx': i }, [
+        h('div', { 'class': 'im', style: 'background-image:url(' + JSON.stringify(photoUrl(src)) + ')', title: 'Drag onto another tile to swap · click to change the photo' }),
         h('span', { 'class': 'tag', text: i === 5 ? '6 · zoom focus' : String(i + 1) })
       ]);
+      attachTileDrag(tile, i);
       g.appendChild(tile);
+    });
+  }
+
+  /* drag a tile onto another to swap; a small move counts as a click (opens the picker) */
+  function attachTileDrag(tile, i) {
+    var im = tile.querySelector('.im');
+    im.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      var startX = e.clientX, startY = e.clientY;
+      var ghost = null, target = null;
+      im.setPointerCapture(e.pointerId);
+
+      function findTile(x, y) {
+        var el = document.elementFromPoint(x, y);
+        var t = el && el.closest ? el.closest('.mont') : null;
+        return (t && t !== tile && t.parentElement === tile.parentElement) ? t : null;
+      }
+      function onMove(ev) {
+        if (!ghost) {
+          if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 7) return;
+          ghost = tile.cloneNode(true);
+          ghost.className = 'mont ghost';
+          ghost.style.width = tile.offsetWidth + 'px';
+          document.body.appendChild(ghost);
+          tile.classList.add('dragging');
+        }
+        ghost.style.left = (ev.clientX - ghost.offsetWidth / 2) + 'px';
+        ghost.style.top = (ev.clientY - ghost.offsetHeight / 2) + 'px';
+        var t = findTile(ev.clientX, ev.clientY);
+        if (target && target !== t) target.classList.remove('drop-target');
+        target = t;
+        if (target) target.classList.add('drop-target');
+      }
+      function onUp(ev) {
+        im.removeEventListener('pointermove', onMove);
+        im.removeEventListener('pointerup', onUp);
+        im.removeEventListener('pointercancel', onUp);
+        if (!ghost) {
+          /* it was a click — open the photo picker */
+          pickPhoto('tile', function (p) { content.montage[i] = p; markDirty(); renderMontageGrid(); });
+          return;
+        }
+        ghost.remove();
+        tile.classList.remove('dragging');
+        if (target) {
+          target.classList.remove('drop-target');
+          var j = Number(target.getAttribute('data-idx'));
+          var tmp = content.montage[i];
+          content.montage[i] = content.montage[j];
+          content.montage[j] = tmp;
+          markDirty();
+          renderMontageGrid();
+        }
+      }
+      im.addEventListener('pointermove', onMove);
+      im.addEventListener('pointerup', onUp);
+      im.addEventListener('pointercancel', onUp);
     });
   }
 
