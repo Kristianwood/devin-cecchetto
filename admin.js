@@ -159,26 +159,42 @@
   /* ---------- section renderers ---------- */
   var redrawProjects, redrawReleases, redrawPosts, redrawCredits, redrawPress, redrawSocials;
 
+  var rearranging = false;
   function renderMontageGrid() {
-    var g = $('montage-grid'); g.innerHTML = '';
+    var g = $('montage-grid');
+    g.innerHTML = '';
+    g.classList.toggle('rearranging', rearranging);
     content.montage.forEach(function (src, i) {
       var tile = h('div', { 'class': 'mont', 'data-idx': i }, [
-        h('div', { 'class': 'im', style: 'background-image:url(' + JSON.stringify(photoUrl(src)) + ')', title: 'Drag onto another tile to swap · click to change the photo' }),
+        h('div', { 'class': 'im', style: 'background-image:url(' + JSON.stringify(photoUrl(src)) + ')', title: rearranging ? 'Drag onto another tile to swap' : 'Click to change the photo' }),
         h('span', { 'class': 'tag', text: i === 5 ? '6 · zoom focus' : String(i + 1) })
       ]);
-      attachTileDrag(tile, i);
+      if (rearranging) attachTileDrag(tile, i);
+      else tile.querySelector('.im').addEventListener('click', function () {
+        pickPhoto('tile', function (p) { content.montage[i] = p; markDirty(); renderMontageGrid(); });
+      });
       g.appendChild(tile);
     });
   }
+  $('btn-rearrange').addEventListener('click', function () {
+    if (!content) return;
+    rearranging = !rearranging;
+    this.textContent = rearranging ? 'Done' : 'Rearrange';
+    this.classList.toggle('on', rearranging);
+    $('wall-hint').innerHTML = rearranging
+      ? '<b>Drag any tile onto another to swap the two photos.</b> Press <b>Done</b> when you like the layout, then Publish.'
+      : 'Twelve tiles. Tile 6 is the one the opening zoom lands on — use a strong close-up there. Click a tile to change its photo, or press <b>Rearrange</b> to drag tiles around.';
+    renderMontageGrid();
+  });
 
-  /* drag a tile onto another to swap; a small move counts as a click (opens the picker) */
+  /* rearrange mode: drag a tile onto another to swap the two photos */
   function attachTileDrag(tile, i) {
     var im = tile.querySelector('.im');
     im.addEventListener('pointerdown', function (e) {
+      if (e.button && e.button !== 0) return;
       e.preventDefault();
       var startX = e.clientX, startY = e.clientY;
       var ghost = null, target = null;
-      im.setPointerCapture(e.pointerId);
 
       function findTile(x, y) {
         var el = document.elementFromPoint(x, y);
@@ -187,7 +203,7 @@
       }
       function onMove(ev) {
         if (!ghost) {
-          if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 7) return;
+          if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 4) return;
           ghost = tile.cloneNode(true);
           ghost.className = 'mont ghost';
           ghost.style.width = tile.offsetWidth + 'px';
@@ -200,17 +216,13 @@
         if (target && target !== t) target.classList.remove('drop-target');
         target = t;
         if (target) target.classList.add('drop-target');
+        ev.preventDefault();
       }
-      function onUp(ev) {
-        im.removeEventListener('pointermove', onMove);
-        im.removeEventListener('pointerup', onUp);
-        im.removeEventListener('pointercancel', onUp);
-        if (!ghost) {
-          /* it was a click — open the photo picker */
-          pickPhoto('tile', function (p) { content.montage[i] = p; markDirty(); renderMontageGrid(); });
-          return;
-        }
-        ghost.remove();
+      function onUp() {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        if (ghost) ghost.remove();
         tile.classList.remove('dragging');
         if (target) {
           target.classList.remove('drop-target');
@@ -222,9 +234,9 @@
           renderMontageGrid();
         }
       }
-      im.addEventListener('pointermove', onMove);
-      im.addEventListener('pointerup', onUp);
-      im.addEventListener('pointercancel', onUp);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
     });
   }
 
