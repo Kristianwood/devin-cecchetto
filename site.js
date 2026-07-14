@@ -1,75 +1,10 @@
-/* Devin Cecchetto — portfolio site */
+/* Devin Cecchetto — portfolio site
+   All content lives in content.json and is editable at /admin.html */
 (function () {
   'use strict';
 
-  var DATA = {
-    vevo: 'https://www.youtube.com/@DevinCecchettoVEVO',
-    imdb: 'https://www.imdb.com/name/nm9816160/',
-    projects: [
-      {
-        title: 'New Single — Video One',
-        youtube: '',
-        released: false,
-        img: 'assets/imdb-48.jpg',
-        desc: 'Devin’s next single, shot in a sun-soaked mid-century house above Los Angeles. Full video and story premiere soon.'
-      },
-      {
-        title: 'New Single — Video Two',
-        youtube: '',
-        released: false,
-        img: 'assets/imdb-01.jpg',
-        desc: 'A top-down drive through the canyons at golden hour. Full video and story premiere soon.'
-      }
-    ],
-    /* Released videos — [title, YouTube ID, caption]; first entry is featured */
-    releases: [
-      ['Super Sonic Girl', 'odZ8sekou60', '2025 · Official Music Video · Vevo'],
-      ['Ships in the Night', 'cwEaXO7ndes', '2025 · Official Music Video'],
-      ['So Obvious', 'IvfGw3QONY0', '2025 · Official Music Video'],
-      ['Fantasy', '2pg2z2ca8is', '2024 · Official Music Video'],
-      ['OFF MY MIND!', 'wQkJ5TQ6b28', '2024 · Official Music Video'],
-      ['Phase', 'nwg8OAoz4Tc', '2023 · Official Music Video'],
-      ['A Christmas Special You Didn’t Know You Needed', 'Vgfmsqeo208', '2025 · Holiday Special']
-    ],
-    credits: [
-      ['The Way Home', 'Evelyn Goodwin — Hallmark Channel, 2025–2026'],
-      ['Wayward', 'Jess — Netflix, 2025'],
-      ['Ginny & Georgia', 'Netflix, 2021'],
-      ['The Craft: Legacy', 'Columbia Pictures, 2020'],
-      ['Bad Influence', 'Lily Miller — TV movie, 2021'],
-      ['The Parker Andersons / Amelia Parker', 'Victoria Anderson — 2021'],
-      ['Don’t Sell My Baby', 'Nicolette (lead) — Lifetime, 2023'],
-      ['Who Killed Our Father?', 'Violet — Lifetime, 2022'],
-      ['Marry F*** Kill', 'Beth — Lifetime, 2023']
-    ],
-    press: [
-      ['Naluda Magazine', 'Interview with actress and singer Devin Cecchetto', 'https://www.naludamagazine.com/interview-with-actress-and-singer-devin-cecchetto/'],
-      ['Drive Music Media', 'From a personal story to a summer track', 'https://drivemusicmedia.co.uk/ships-in-the-night-and-so-obvious-devin-cecchetto-from-a-personal-story-to-a-summer-track-03-08-2025/'],
-      ['Drive Music Media', 'I’m so honored to be part of The Way Home — its story is truly healing', 'https://drivemusicmedia.co.uk/devin-cecchetto-i-m-so-honored-to-be-part-of-the-way-home-as-its-roots-are-deep-and-its-story-is-truly-healing-30-03-2025/'],
-      ['Fangirlish', 'The Way Home cast on what they would tell their younger selves', 'https://fangirlish.com/2026/06/24/julia-tomasone-jordan-doww-devin-cecchetto-kelsey-falconer-talk-about-what-they-would-tell-their-younger-selves-about-the-way-home/'],
-      ['Stay2uned', 'Behind the scenes with Devin Cecchetto — exploring The Way Home', 'https://stay2uned.com/2025/02/06/behind-the-scenes-with-devin-cecchetto-exploring-the-way-home-a-stay2uned-exclusive-interview/']
-    ],
-    bio: 'Devin Cecchetto is a singer-songwriter and actress from Toronto, moving between Canada and Los Angeles.\n\nShe began singing in operas at age six, trained in musical theatre, and grew up on stages in Toronto’s east end. On screen she is known for The Way Home (Hallmark), Wayward and Ginny & Georgia (Netflix), and a string of leading roles in Lifetime features.\n\nHer own music — dreamy, cinematic pop — brings both halves of her life together, from “Ships in the Night” and “So Obvious” to “Super Sonic Girl” and a Christmas special of her very own.',
-    email: 'hello@devincecchetto.com',
-    contactNote: 'For bookings, press, casting and collaborations — or just to say hi.',
-    socials: [
-      ['YouTube', 'https://www.youtube.com/@Devin_cecchetto'],
-      ['Vevo', 'https://www.youtube.com/@DevinCecchettoVEVO'],
-      ['Instagram', 'https://www.instagram.com/devin_cecchetto/'],
-      ['TikTok', 'https://www.tiktok.com/@devin_cecchetto'],
-      ['Spotify', 'https://open.spotify.com/artist/2Rt3h2vXiM9AIDkJ0agHEp'],
-      ['Apple Music', 'https://music.apple.com/us/artist/devin-cecchetto/1665352801']
-    ],
-    montage: [
-      'assets/imdb-17.jpg', 'assets/imdb-05.jpg', 'assets/imdb-21.jpg', 'assets/imdb-47.jpg',
-      'assets/imdb-16.jpg', 'assets/imdb-08.jpg', 'assets/imdb-15.jpg', 'assets/imdb-18.jpg',
-      'assets/imdb-31.jpg', 'assets/imdb-44.jpg', 'assets/imdb-43.jpg', 'assets/imdb-36.jpg'
-    ],
-    actingHero: 'assets/imdb-04.jpg',
-    aboutPortrait: 'assets/imdb-22.jpg'
-  };
-
-  var PAGES = ['home', 'videos', 'acting', 'press', 'about', 'contact'];
+  var DATA = null;
+  var PAGES = ['home', 'videos', 'acting', 'press', 'news', 'about', 'contact'];
   var MONTAGE_DELAYS = [0.8, 0.45, 1.25, 0.65, 1.1, 0, 0.55, 1.4, 0.9, 1.3, 0.7, 1.5];
 
   function el(tag, attrs, html) {
@@ -83,7 +18,7 @@
   }
   function ytId(u) {
     var m = /(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/.exec(u || '');
-    return m ? m[1] : '';
+    return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || '') ? u : '');
   }
 
   /* ---- HOME montage ---- */
@@ -140,27 +75,29 @@
     });
 
     /* Released videos */
-    var head = el('div', { style: 'padding:40px 24px 10px;text-align:center' });
-    head.appendChild(el('p', { 'class': 'kicker', style: 'animation:none' }, 'From the catalogue'));
-    head.appendChild(el('h1', { 'class': 'title', style: 'animation:none;font-size:clamp(34px,4.5vw,60px)' }, 'Released'));
-    list.appendChild(head);
-    var grid = el('div', { 'class': 'mv-grid' });
-    DATA.releases.forEach(function (r, i) {
-      var card = el('div', { 'class': 'mv-card reveal' + (i === 0 ? ' featured' : '') });
-      var frame = el('div', { 'class': 'frame' });
-      frame.appendChild(el('iframe', {
-        src: 'https://www.youtube-nocookie.com/embed/' + r[1],
-        title: r[0],
-        loading: 'lazy',
-        allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
-        allowfullscreen: ''
-      }));
-      card.appendChild(frame);
-      card.appendChild(el('h3', null, esc(r[0])));
-      card.appendChild(el('p', null, esc(r[2])));
-      grid.appendChild(card);
-    });
-    list.appendChild(grid);
+    if (DATA.releases.length) {
+      var head = el('div', { style: 'padding:40px 24px 10px;text-align:center' });
+      head.appendChild(el('p', { 'class': 'kicker', style: 'animation:none' }, 'From the catalogue'));
+      head.appendChild(el('h1', { 'class': 'title', style: 'animation:none;font-size:clamp(34px,4.5vw,60px)' }, 'Released'));
+      list.appendChild(head);
+      var grid = el('div', { 'class': 'mv-grid' });
+      DATA.releases.forEach(function (r, i) {
+        var card = el('div', { 'class': 'mv-card reveal' + (i === 0 ? ' featured' : '') });
+        var frame = el('div', { 'class': 'frame' });
+        frame.appendChild(el('iframe', {
+          src: 'https://www.youtube-nocookie.com/embed/' + ytId(r[1]),
+          title: r[0],
+          loading: 'lazy',
+          allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+          allowfullscreen: ''
+        }));
+        card.appendChild(frame);
+        card.appendChild(el('h3', null, esc(r[0])));
+        card.appendChild(el('p', null, esc(r[2])));
+        grid.appendChild(card);
+      });
+      list.appendChild(grid);
+    }
   }
 
   /* ---- ACTING ---- */
@@ -176,7 +113,8 @@
       wrap.appendChild(d);
     });
     var imdb = document.getElementById('imdb-link');
-    if (DATA.imdb) imdb.href = DATA.imdb; else imdb.parentElement.style.display = 'none';
+    if (DATA.imdb) { imdb.href = DATA.imdb; imdb.parentElement.style.display = ''; }
+    else imdb.parentElement.style.display = 'none';
   }
 
   /* ---- PRESS ---- */
@@ -189,6 +127,42 @@
       a.appendChild(el('p', { 'class': 'q' }, '&ldquo;' + esc(q[1]) + '&rdquo;'));
       a.appendChild(el('p', { 'class': 'o' }, esc(q[0]) + ' &rarr;'));
       wrap.appendChild(a);
+    });
+  }
+
+  /* ---- NEWS (posts) ---- */
+  function fmtDate(iso) {
+    try {
+      var d = new Date(iso + 'T12:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch (e) { return iso; }
+  }
+  function renderNews() {
+    var posts = DATA.posts || [];
+    var navLink = document.querySelector('nav.main a[href="#news"]');
+    navLink.style.display = posts.length ? '' : 'none';
+    var wrap = document.getElementById('news-list');
+    wrap.innerHTML = '';
+    posts.forEach(function (p, i) {
+      var card = el('article', { 'class': 'post' });
+      card.style.animationDelay = (0.45 + i * 0.12).toFixed(2) + 's';
+      if (p.img) card.appendChild(el('div', { 'class': 'post-img', style: "background-image:url('" + p.img + "')" }));
+      var inner = el('div', { 'class': 'post-body' });
+      if (p.date) inner.appendChild(el('p', { 'class': 'post-date' }, esc(fmtDate(p.date))));
+      inner.appendChild(el('h3', null, esc(p.title || '')));
+      if (p.body) inner.appendChild(el('p', { 'class': 'post-text' }, esc(p.body)));
+      var vid = ytId(p.youtube);
+      if (vid) {
+        var frame = el('div', { 'class': 'frame', style: 'margin-top:18px' });
+        frame.appendChild(el('iframe', {
+          src: 'https://www.youtube-nocookie.com/embed/' + vid, title: p.title || 'video', loading: 'lazy',
+          allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture', allowfullscreen: ''
+        }));
+        inner.appendChild(frame);
+      }
+      if (p.link) inner.appendChild(el('p', { 'class': 'post-link' }, '<a href="' + esc(p.link) + '" target="_blank" rel="noopener">Read more &rarr;</a>'));
+      card.appendChild(inner);
+      wrap.appendChild(card);
     });
   }
 
@@ -207,7 +181,8 @@
       soc.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener' }, esc(s[0])));
     });
     var vevo = document.getElementById('vevo-link');
-    if (DATA.vevo) vevo.href = DATA.vevo; else vevo.parentElement.style.display = 'none';
+    if (DATA.vevo) { vevo.href = DATA.vevo; vevo.parentElement.style.display = ''; }
+    else vevo.parentElement.style.display = 'none';
   }
 
   /* ---- Router ---- */
@@ -231,7 +206,7 @@
     if (page === 'home') renderMontage(); /* replay montage zoom */
     window.scrollTo(0, 0);
   }
-  window.addEventListener('hashchange', function () { show(pageFromHash()); });
+  window.addEventListener('hashchange', function () { if (DATA) show(pageFromHash()); });
 
   /* ---- Petal click effect (fires on nav clicks too, like the original design) ---- */
   document.addEventListener('click', function (e) {
@@ -248,10 +223,25 @@
     }
   });
 
-  /* ---- Init ---- */
-  renderVideos();
-  renderActing();
-  renderPress();
-  renderRest();
-  show(pageFromHash());
+  /* ---- Init: load content (draft preview from admin panel wins) ---- */
+  function boot(content) {
+    DATA = content;
+    renderVideos();
+    renderActing();
+    renderPress();
+    renderNews();
+    renderRest();
+    show(pageFromHash());
+  }
+
+  var draft = null;
+  if (new URLSearchParams(location.search).has('preview')) {
+    try { draft = JSON.parse(localStorage.getItem('dc-draft-preview')); } catch (e) {}
+    if (draft) {
+      var banner = el('div', { style: 'position:fixed;bottom:14px;left:14px;z-index:80;padding:8px 16px;border-radius:999px;background:#4a3c32;color:#f7f2ec;font-size:11px;letter-spacing:.18em;text-transform:uppercase;box-shadow:0 10px 26px rgba(74,60,50,.3)' }, 'Draft preview — not published');
+      document.body.appendChild(banner);
+    }
+  }
+  if (draft) boot(draft);
+  else fetch('content.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(boot);
 })();

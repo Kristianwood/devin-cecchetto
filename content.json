@@ -1,0 +1,66 @@
+{
+  "vevo": "https://www.youtube.com/@DevinCecchettoVEVO",
+  "imdb": "https://www.imdb.com/name/nm9816160/",
+  "projects": [
+    {
+      "title": "New Single — Video One",
+      "youtube": "",
+      "released": false,
+      "img": "assets/imdb-48.jpg",
+      "desc": "Devin’s next single, shot in a sun-soaked mid-century house above Los Angeles. Full video and story premiere soon."
+    },
+    {
+      "title": "New Single — Video Two",
+      "youtube": "",
+      "released": false,
+      "img": "assets/imdb-01.jpg",
+      "desc": "A top-down drive through the canyons at golden hour. Full video and story premiere soon."
+    }
+  ],
+  "releases": [
+    ["Super Sonic Girl", "odZ8sekou60", "2025 · Official Music Video · Vevo"],
+    ["Ships in the Night", "cwEaXO7ndes", "2025 · Official Music Video"],
+    ["So Obvious", "IvfGw3QONY0", "2025 · Official Music Video"],
+    ["Fantasy", "2pg2z2ca8is", "2024 · Official Music Video"],
+    ["OFF MY MIND!", "wQkJ5TQ6b28", "2024 · Official Music Video"],
+    ["Phase", "nwg8OAoz4Tc", "2023 · Official Music Video"],
+    ["A Christmas Special You Didn’t Know You Needed", "Vgfmsqeo208", "2025 · Holiday Special"]
+  ],
+  "credits": [
+    ["The Way Home", "Evelyn Goodwin — Hallmark Channel, 2025–2026"],
+    ["Wayward", "Jess — Netflix, 2025"],
+    ["Ginny & Georgia", "Netflix, 2021"],
+    ["The Craft: Legacy", "Columbia Pictures, 2020"],
+    ["Bad Influence", "Lily Miller — TV movie, 2021"],
+    ["The Parker Andersons / Amelia Parker", "Victoria Anderson — 2021"],
+    ["Don’t Sell My Baby", "Nicolette (lead) — Lifetime, 2023"],
+    ["Who Killed Our Father?", "Violet — Lifetime, 2022"],
+    ["Marry F*** Kill", "Beth — Lifetime, 2023"]
+  ],
+  "press": [
+    ["Naluda Magazine", "Interview with actress and singer Devin Cecchetto", "https://www.naludamagazine.com/interview-with-actress-and-singer-devin-cecchetto/"],
+    ["Drive Music Media", "From a personal story to a summer track", "https://drivemusicmedia.co.uk/ships-in-the-night-and-so-obvious-devin-cecchetto-from-a-personal-story-to-a-summer-track-03-08-2025/"],
+    ["Drive Music Media", "I’m so honored to be part of The Way Home — its story is truly healing", "https://drivemusicmedia.co.uk/devin-cecchetto-i-m-so-honored-to-be-part-of-the-way-home-as-its-roots-are-deep-and-its-story-is-truly-healing-30-03-2025/"],
+    ["Fangirlish", "The Way Home cast on what they would tell their younger selves", "https://fangirlish.com/2026/06/24/julia-tomasone-jordan-doww-devin-cecchetto-kelsey-falconer-talk-about-what-they-would-tell-their-younger-selves-about-the-way-home/"],
+    ["Stay2uned", "Behind the scenes with Devin Cecchetto — exploring The Way Home", "https://stay2uned.com/2025/02/06/behind-the-scenes-with-devin-cecchetto-exploring-the-way-home-a-stay2uned-exclusive-interview/"]
+  ],
+  "posts": [],
+  "bio": "Devin Cecchetto is a singer-songwriter and actress from Toronto, moving between Canada and Los Angeles.\n\nShe began singing in operas at age six, trained in musical theatre, and grew up on stages in Toronto’s east end. On screen she is known for The Way Home (Hallmark), Wayward and Ginny & Georgia (Netflix), and a string of leading roles in Lifetime features.\n\nHer own music — dreamy, cinematic pop — brings both halves of her life together, from “Ships in the Night” and “So Obvious” to “Super Sonic Girl” and a Christmas special of her very own.",
+  "email": "hello@devincecchetto.com",
+  "contactNote": "For bookings, press, casting and collaborations — or just to say hi.",
+  "socials": [
+    ["YouTube", "https://www.youtube.com/@Devin_cecchetto"],
+    ["Vevo", "https://www.youtube.com/@DevinCecchettoVEVO"],
+    ["Instagram", "https://www.instagram.com/devin_cecchetto/"],
+    ["TikTok", "https://www.tiktok.com/@devin_cecchetto"],
+    ["Spotify", "https://open.spotify.com/artist/2Rt3h2vXiM9AIDkJ0agHEp"],
+    ["Apple Music", "https://music.apple.com/us/artist/devin-cecchetto/1665352801"]
+  ],
+  "montage": [
+    "assets/imdb-17.jpg", "assets/imdb-05.jpg", "assets/imdb-21.jpg", "assets/imdb-47.jpg",
+    "assets/imdb-16.jpg", "assets/imdb-08.jpg", "assets/imdb-15.jpg", "assets/imdb-18.jpg",
+    "assets/imdb-31.jpg", "assets/imdb-44.jpg", "assets/imdb-43.jpg", "assets/imdb-36.jpg"
+  ],
+  "actingHero": "assets/imdb-04.jpg",
+  "aboutPortrait": "assets/imdb-22.jpg"
+}

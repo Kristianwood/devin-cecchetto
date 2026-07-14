@@ -98,6 +98,18 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
 .quote .q{margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:23px;color:#4a3c32}
 .quote .o{margin:10px 0 0;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#8a6f5f}
 
+/* NEWS */
+#p-news{min-height:100vh;padding:150px 24px 110px;box-sizing:border-box}
+.news-wrap{max-width:760px;margin:0 auto}
+.news-list{display:flex;flex-direction:column;gap:26px;margin-top:54px}
+.post{background:#fff;border:1px solid #e3d6c9;border-radius:16px;overflow:hidden;animation:riseUp .9s ease both}
+.post-img{aspect-ratio:16/8;background-size:cover;background-position:center}
+.post-body{padding:26px 30px 30px}
+.post-date{margin:0 0 6px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#8a6f5f}
+.post-body h3{margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:28px}
+.post-text{margin:12px 0 0;font-size:15.5px;line-height:1.85;font-weight:300;white-space:pre-line}
+.post-link{margin:14px 0 0;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+
 /* ABOUT */
 #p-about{background:#efe6da;min-height:100vh;padding:150px 24px 110px;box-sizing:border-box}
 .about-grid{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:56px;align-items:center}
@@ -124,6 +136,7 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
   <a href="#videos">Videos</a>
   <a href="#acting">Acting</a>
   <a href="#press">Press</a>
+  <a href="#news" style="display:none">News</a>
   <a href="#about">About</a>
   <a href="#contact">Contact</a>
 </nav>
@@ -171,6 +184,15 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
     <p class="kicker">In the words of others</p>
     <h1 class="title">Press</h1>
     <div class="press-list" id="press-list"></div>
+  </div>
+</div>
+
+<!-- NEWS -->
+<div class="page" id="p-news">
+  <div class="news-wrap">
+    <p class="kicker">Notes from Devin</p>
+    <h1 class="title">News</h1>
+    <div class="news-list" id="news-list"></div>
   </div>
 </div>
 
