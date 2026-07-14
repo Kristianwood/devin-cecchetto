@@ -10,14 +10,14 @@
         title: 'New Single — Video One',
         youtube: '',
         released: false,
-        img: 'assets/home-04.jpg',
+        img: 'assets/imdb-48.jpg',
         desc: 'Devin’s next single, shot in a sun-soaked mid-century house above Los Angeles. Full video and story premiere soon.'
       },
       {
         title: 'New Single — Video Two',
         youtube: '',
         released: false,
-        img: 'assets/road-14.jpg',
+        img: 'assets/imdb-01.jpg',
         desc: 'A top-down drive through the canyons at golden hour. Full video and story premiere soon.'
       }
     ],
@@ -61,12 +61,12 @@
       ['Apple Music', 'https://music.apple.com/us/artist/devin-cecchetto/1665352801']
     ],
     montage: [
-      'assets/home-03.jpg', 'assets/road-06.jpg', 'assets/home-13.jpg', 'assets/road-08.jpg',
-      'assets/home-05.jpg', 'assets/road-05.jpg', 'assets/home-12.jpg', 'assets/road-01.jpg',
-      'assets/road-15.jpg', 'assets/home-18.jpg', 'assets/road-04.jpg', 'assets/home-09.jpg'
+      'assets/imdb-17.jpg', 'assets/imdb-05.jpg', 'assets/imdb-21.jpg', 'assets/imdb-47.jpg',
+      'assets/imdb-16.jpg', 'assets/imdb-08.jpg', 'assets/imdb-15.jpg', 'assets/imdb-18.jpg',
+      'assets/imdb-31.jpg', 'assets/imdb-44.jpg', 'assets/imdb-43.jpg', 'assets/imdb-36.jpg'
     ],
-    actingHero: 'assets/press.jpg',
-    aboutPortrait: 'assets/home-06.jpg'
+    actingHero: 'assets/imdb-04.jpg',
+    aboutPortrait: 'assets/imdb-22.jpg'
   };
 
   var PAGES = ['home', 'videos', 'acting', 'press', 'about', 'contact'];
@@ -233,9 +233,9 @@
   }
   window.addEventListener('hashchange', function () { show(pageFromHash()); });
 
-  /* ---- Petal click effect ---- */
+  /* ---- Petal click effect (fires on nav clicks too, like the original design) ---- */
   document.addEventListener('click', function (e) {
-    if (e.target.closest('input, textarea, select, iframe, a, button')) return;
+    if (e.target.closest('input, textarea, select, iframe')) return;
     var colors = ['#e8d5c8', '#d9c2b8', '#f0e3d4', '#cdb6a8'];
     for (var i = 0; i < 6; i++) {
       var s = document.createElement('span');

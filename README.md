@@ -5,7 +5,7 @@ built from the Claude Design project "Devin Cecchetto Portfolio".
 
 ## Sections
 
-- **Home** — cinematic zoom-out montage of stills from her two upcoming music videos
+- **Home** — cinematic zoom-out montage of photos from her IMDb gallery
 - **Videos** — two upcoming singles ("coming soon" heroes) + full released catalogue
   (Super Sonic Girl, Ships in the Night, So Obvious, Fantasy, OFF MY MIND!, Phase,
   the Christmas special) embedded from YouTube, with a link to her
@@ -22,7 +22,7 @@ titles, YouTube links, credits, press, bio, email and socials.
 When a new video premieres, paste its YouTube URL into the matching
 `projects[].youtube` field and set `released: true`.
 
-Photos live in `assets/` (web-optimized to 1920px).
+Photos live in `assets/` (from her IMDb gallery, web-optimized to max 1920px).
 
 ## Hosting
 
