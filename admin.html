@@ -76,12 +76,18 @@ textarea{resize:vertical}
 
 <div id="login" class="login" style="display:none">
   <h1>Devin&rsquo;s admin panel</h1>
-  <p class="muted">Edits publish straight to the live site (it takes about a minute to go live). To unlock the panel you need a GitHub access token — a one-time setup:</p>
+  <p class="muted">Edits publish straight to the live site (it takes about a minute to go live). To unlock the panel you need a GitHub access token — a one-time setup. <b>Which kind depends on the account you use:</b></p>
   <ol>
-    <li>Sign in to the GitHub account that owns (or can edit) <b>Kristianwood/devin-cecchetto</b></li>
-    <li>Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
-    <li>Token name: <i>site admin</i> &middot; Expiration: 1 year &middot; Repository access: <b>Only select repositories → devin-cecchetto</b></li>
-    <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+    <li><b>If your GitHub account owns the site</b> (Kristianwood):
+      open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>
+      &middot; Repository access: <b>Only select repositories → devin-cecchetto</b>
+      &middot; Permissions → Repository permissions → <b>Contents: Read and write</b> (the dropdown defaults to Read-only — change it!)
+      &middot; Expiration: 1 year</li>
+    <li><b>If you were added as a collaborator</b> (e.g. Devin on her own account):
+      fine-grained tokens won&rsquo;t work for a site owned by someone else — create a <b>classic token</b> instead at
+      <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>
+      &middot; tick the <b>repo</b> scope &middot; Expiration: 1 year.
+      (The site owner must first add your account under the repository&rsquo;s Settings → Collaborators.)</li>
     <li>Generate, copy the token and paste it below (it stays in this browser only)</li>
   </ol>
   <label>GitHub token</label>

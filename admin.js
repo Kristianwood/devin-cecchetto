@@ -11,7 +11,8 @@
 
   var token = localStorage.getItem(TOKEN_KEY) || '';
   var content = null;           // working copy of content.json
-  var library = [];             // [{path, url}] photos in assets/ (repo)
+  var canPush = false;          // token verified to have write access
+  var library = [];             // [{path, sha}] photos in assets/ (repo)
   var uploads = {};             // path -> {b64, dataUrl} pending new photos
   var publishedThumbs = {};     // path -> dataUrl for photos published this session (CDN may lag)
   var deletes = {};             // path -> true pending photo deletions
@@ -86,19 +87,29 @@
     $('login').style.display = 'none';
     status('Loading…');
     Promise.all([
+      gh(''),
       gh('/contents/content.json?ref=' + BRANCH),
       gh('/contents/assets?ref=' + BRANCH)
     ]).then(function (res) {
-      content = JSON.parse(b64DecodeUnicode(res[0].content));
-      library = res[1].filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
-        .map(function (f) { return { path: 'assets/' + f.name }; });
+      canPush = !!(res[0].permissions && res[0].permissions.push);
+      if (!canPush) {
+        throw new Error('NO_WRITE');
+      }
+      content = JSON.parse(b64DecodeUnicode(res[1].content));
+      library = res[2].filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
+        .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
       $('panel').style.display = 'block';
       renderAll();
       status('Loaded — no unpublished changes');
     }).catch(function (e) {
       $('login').style.display = 'block';
       $('panel').style.display = 'none';
-      $('login-err').textContent = 'Could not load the site with this token (' + e.message + '). Check the token and try again.';
+      $('login-err').innerHTML = e.message === 'NO_WRITE'
+        ? 'This token can <b>read</b> the site but not <b>publish</b> to it. Usually one of these:<br>' +
+          '&bull; the token’s <b>Contents</b> permission was left on “Read-only” — re-create it with <b>Read and write</b>;<br>' +
+          '&bull; a fine-grained token was created on an account that doesn’t <b>own</b> the site — if you were added as a collaborator, use a <b>classic token</b> instead (see step 2 above);<br>' +
+          '&bull; the account hasn’t been added as a collaborator on the repository yet.'
+        : 'Could not load the site with this token (' + e.message + '). Check the token and try again.';
     });
   }
   $('token-save').addEventListener('click', function () {
@@ -458,13 +469,12 @@
   });
 
   /* ---------- publish ---------- */
-  $('btn-publish').addEventListener('click', function () {
-    if (!dirty && !Object.keys(uploads).length && !Object.keys(deletes).length) { status('Nothing to publish'); return; }
-    $('btn-publish').disabled = true;
-    status('Publishing…');
-    log('— publish started —');
+  /* Primary path: Git Data API — one commit for everything.
+     Fallback: Contents API (one commit per file) — some token types can
+     read/write contents but are not allowed on the git-data endpoints. */
+  function publishGitData() {
     var parentSha, baseTree;
-    gh('/git/ref/heads/' + BRANCH).then(function (ref) {
+    return gh('/git/ref/heads/' + BRANCH).then(function (ref) {
       parentSha = ref.object.sha;
       return gh('/git/commits/' + parentSha);
     }).then(function (commit) {
@@ -495,20 +505,80 @@
       });
     }).then(function (commit) {
       return gh('/git/refs/heads/' + BRANCH, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
+    });
+  }
+  function publishContentsApi() {
+    var chain = Promise.resolve();
+    Object.keys(uploads).forEach(function (p) {
+      chain = chain.then(function () {
+        log('uploading ' + p + ' (compatible mode)');
+        return gh('/contents/' + p, {
+          method: 'PUT',
+          body: JSON.stringify({ message: 'Add photo via admin panel', content: uploads[p].b64, branch: BRANCH })
+        });
+      });
+    });
+    Object.keys(deletes).forEach(function (p) {
+      var entry = library.filter(function (f) { return f.path === p; })[0];
+      if (!entry) return;
+      chain = chain.then(function () {
+        log('deleting ' + p + ' (compatible mode)');
+        return gh('/contents/' + p, {
+          method: 'DELETE',
+          body: JSON.stringify({ message: 'Delete photo via admin panel', sha: entry.sha, branch: BRANCH })
+        });
+      });
+    });
+    chain = chain.then(function () {
+      /* fetch the freshest sha for content.json, then update it */
+      return gh('/contents/content.json?ref=' + BRANCH).then(function (f) {
+        log('saving content.json (compatible mode)');
+        return gh('/contents/content.json', {
+          method: 'PUT',
+          body: JSON.stringify({
+            message: 'Site update via admin panel',
+            content: b64EncodeUnicode(JSON.stringify(content, null, 2) + '\n'),
+            sha: f.sha,
+            branch: BRANCH
+          })
+        });
+      });
+    });
+    return chain;
+  }
+  $('btn-publish').addEventListener('click', function () {
+    if (!dirty && !Object.keys(uploads).length && !Object.keys(deletes).length) { status('Nothing to publish'); return; }
+    $('btn-publish').disabled = true;
+    status('Publishing…');
+    log('— publish started —');
+    publishGitData().catch(function (e) {
+      if (!/403/.test(e.message)) throw e;
+      log('standard publish not allowed for this token (' + e.message + ') — retrying in compatible mode');
+      return publishContentsApi();
     }).then(function () {
       Object.keys(uploads).forEach(function (p) {
         publishedThumbs[p] = uploads[p].dataUrl; /* CDN may lag a minute; keep local thumb */
-        library.unshift({ path: p });
       });
       uploads = {};
-      library = library.filter(function (f) { return !deletes[f.path]; });
       deletes = {};
       dirty = false;
-      log('— published —');
-      status('Published! The live site updates in about a minute.');
-      $('btn-publish').disabled = false;
+      /* refresh the photo library so new files carry their real shas */
+      return gh('/contents/assets?ref=' + BRANCH).then(function (files) {
+        library = files.filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
+          .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
+      }).catch(function () { /* non-fatal */ }).then(function () {
+        log('— published —');
+        status('Published! The live site updates in about a minute.');
+        $('btn-publish').disabled = false;
+      });
     }).catch(function (e) {
       log('ERROR: ' + e.message);
+      if (/403/.test(e.message)) {
+        log('The token is not allowed to write to the site. Re-create it with');
+        log('Contents: Read and write — and note that a fine-grained token only');
+        log('works when created on the account that OWNS the repo. Collaborators');
+        log('should use a classic token (github.com/settings/tokens/new, scope: repo).');
+      }
       status('Publish failed — see log below', true);
       $('btn-publish').disabled = false;
     });
