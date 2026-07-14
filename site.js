@@ -4,7 +4,7 @@
   'use strict';
 
   var DATA = null;
-  var PAGES = ['home', 'videos', 'acting', 'press', 'news', 'about', 'contact'];
+  var PAGES = ['home', 'videos', 'listen', 'acting', 'press', 'news', 'about', 'contact', 'presskit'];
   var MONTAGE_DELAYS = [0.8, 0.45, 1.25, 0.65, 1.1, 0, 0.55, 1.4, 0.9, 1.3, 0.7, 1.5];
 
   function el(tag, attrs, html) {
@@ -230,6 +230,96 @@
     }
   }
 
+  /* ---- Newsletter block (Listen + Contact) — hidden until a form action is configured ---- */
+  function newsletterBlock() {
+    var n = DATA.newsletter || {};
+    if (!n.action) return null;
+    var card = el('div', { 'class': 'news-card' });
+    card.appendChild(el('h3', null, 'First listen'));
+    card.appendChild(el('p', null, esc(n.note || 'New music first — straight to your inbox.')));
+    var form = el('form', { action: n.action, method: 'post', target: '_blank' });
+    form.appendChild(el('input', { type: 'email', name: 'email', required: '', placeholder: 'your@email.com', 'aria-label': 'Email address' }));
+    form.appendChild(el('button', { type: 'submit' }, 'Sign up'));
+    card.appendChild(form);
+    return card;
+  }
+
+  /* ---- LISTEN ---- */
+  function renderListen() {
+    var navLink = document.querySelector('nav.main a[href="#listen"]');
+    var m = /open\.spotify\.com\/(?:intl-[a-z]+\/)?artist\/([A-Za-z0-9]+)/.exec(DATA.spotify || '');
+    navLink.style.display = m ? '' : 'none';
+    if (!m) return;
+    var mount = document.getElementById('spotify-mount');
+    mount.innerHTML = '';
+    mount.appendChild(el('iframe', {
+      src: 'https://open.spotify.com/embed/artist/' + m[1] + '?utm_source=generator',
+      title: 'Devin Cecchetto on Spotify',
+      loading: 'lazy',
+      allow: 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+    }));
+    var btns = document.getElementById('plat-btns');
+    btns.innerHTML = '';
+    (DATA.socials || []).forEach(function (s) {
+      if (!s[1]) return;
+      btns.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener' }, esc(s[0])));
+    });
+    var news = document.getElementById('listen-news');
+    news.innerHTML = '';
+    var card = newsletterBlock();
+    if (card) news.appendChild(card);
+  }
+
+  /* ---- PRESS KIT ---- */
+  function renderEPK() {
+    var k = DATA.epk || {};
+    document.getElementById('epk-tagline').textContent = k.tagline || '';
+    var acts = document.getElementById('epk-actions');
+    acts.innerHTML = '';
+    var links = [];
+    if (DATA.reel) links.push(['Watch the demo reel', DATA.reel]);
+    if (k.resumeUrl) links.push(['Résumé (PDF)', k.resumeUrl]);
+    if (DATA.imdb) links.push(['IMDb', DATA.imdb]);
+    if (DATA.vevo) links.push(['Vevo', DATA.vevo]);
+    if (DATA.spotify) links.push(['Spotify', DATA.spotify]);
+    links.forEach(function (l) {
+      acts.appendChild(el('a', { href: l[1], target: '_blank', rel: 'noopener' }, esc(l[0])));
+    });
+    var facts = document.getElementById('epk-facts');
+    facts.innerHTML = '';
+    (k.facts || []).forEach(function (f) { facts.appendChild(el('li', null, esc(f))); });
+    var ph = document.getElementById('epk-photos');
+    ph.innerHTML = '';
+    (k.photos || []).forEach(function (p) {
+      var a = el('a', { href: p.img, download: '', target: '_blank' });
+      a.appendChild(el('div', { 'class': 'im', style: "background-image:url('" + p.img + "')" }));
+      a.appendChild(el('span', { 'class': 'lb' }, esc(p.label || 'Photo') + ' &darr;'));
+      ph.appendChild(a);
+    });
+    var bios = document.getElementById('epk-bios');
+    bios.innerHTML = '';
+    [['Short bio', k.bioShort], ['Medium bio', k.bioMed], ['Long bio', k.bioLong]].forEach(function (b) {
+      if (!b[1]) return;
+      var box = el('div', { 'class': 'epk-bio' });
+      var top = el('div', { 'class': 'top' });
+      top.appendChild(el('h3', null, esc(b[0])));
+      var btn = el('button', null, 'Copy');
+      btn.addEventListener('click', function () {
+        navigator.clipboard.writeText(b[1]).then(function () {
+          btn.textContent = 'Copied!';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+        });
+      });
+      top.appendChild(btn);
+      box.appendChild(top);
+      box.appendChild(el('p', null, esc(b[1])));
+      bios.appendChild(box);
+    });
+    var em = document.getElementById('epk-email');
+    em.textContent = DATA.email;
+    em.href = 'mailto:' + DATA.email;
+  }
+
   /* ---- ABOUT / CONTACT ---- */
   function renderRest() {
     document.getElementById('about-portrait').style.backgroundImage = "url('" + DATA.aboutPortrait + "')";
@@ -247,6 +337,10 @@
     var vevo = document.getElementById('vevo-link');
     if (DATA.vevo) { vevo.href = DATA.vevo; vevo.parentElement.style.display = ''; }
     else vevo.parentElement.style.display = 'none';
+    var cn = document.getElementById('contact-news');
+    cn.innerHTML = '';
+    var card = newsletterBlock();
+    if (card) { card.style.animation = 'riseUp .9s ease .85s both'; cn.appendChild(card); }
   }
 
   /* ---- Router ---- */
@@ -297,10 +391,12 @@
   function boot(content) {
     DATA = content;
     renderVideos();
+    renderListen();
     renderActing();
     renderPress();
     renderNews();
     renderTimeline();
+    renderEPK();
     renderRest();
     show(pageFromHash());
   }

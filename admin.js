@@ -307,6 +307,45 @@
       markDirty(); redrawPosts();
     };
 
+    /* Listen & newsletter */
+    if (!content.newsletter) content.newsletter = { action: '', note: '' };
+    $('f-spotify').value = content.spotify || '';
+    $('f-spotify').oninput = function (e) { content.spotify = e.target.value; markDirty(); };
+    $('f-news-action').value = content.newsletter.action || '';
+    $('f-news-action').oninput = function (e) { content.newsletter.action = e.target.value; markDirty(); };
+    $('f-news-note').value = content.newsletter.note || '';
+    $('f-news-note').oninput = function (e) { content.newsletter.note = e.target.value; markDirty(); };
+
+    /* Press kit */
+    if (!content.epk) content.epk = { tagline: '', facts: [], bioShort: '', bioMed: '', bioLong: '', photos: [], resumeUrl: '' };
+    $('f-epk-tagline').value = content.epk.tagline || '';
+    $('f-epk-tagline').oninput = function (e) { content.epk.tagline = e.target.value; markDirty(); };
+    $('f-epk-resume').value = content.epk.resumeUrl || '';
+    $('f-epk-resume').oninput = function (e) { content.epk.resumeUrl = e.target.value; markDirty(); };
+    $('f-epk-short').value = content.epk.bioShort || '';
+    $('f-epk-short').oninput = function (e) { content.epk.bioShort = e.target.value; markDirty(); };
+    $('f-epk-med').value = content.epk.bioMed || '';
+    $('f-epk-med').oninput = function (e) { content.epk.bioMed = e.target.value; markDirty(); };
+    $('f-epk-long').value = content.epk.bioLong || '';
+    $('f-epk-long').oninput = function (e) { content.epk.bioLong = e.target.value; markDirty(); };
+    var redrawFacts = listEditor('epk-facts-ed', content.epk.facts, function (box, f, i) {
+      box.appendChild(field('Fact', h('input', {
+        type: 'text', value: f || '',
+        oninput: function (e) { content.epk.facts[i] = e.target.value; markDirty(); }
+      })));
+    });
+    $('add-epk-fact').onclick = function () { content.epk.facts.push(''); markDirty(); redrawFacts(); };
+    var redrawEpkPhotos = listEditor('epk-photos-ed', content.epk.photos, function (box, p) {
+      var thumb = h('div', { 'class': 'thumb tall', style: 'background-image:url(' + JSON.stringify(p.img ? photoUrl(p.img) : '') + ')' });
+      box.appendChild(h('div', { 'class': 'slot' }, [
+        thumb,
+        h('span', { 'class': 'name', text: 'Downloadable photo' }),
+        h('button', { 'class': 'small', text: 'Change', onclick: function () { pickPhoto('free', function (path) { p.img = path; markDirty(); thumb.style.backgroundImage = 'url(' + JSON.stringify(photoUrl(path)) + ')'; }); } })
+      ]));
+      box.appendChild(field('Label (e.g. Headshot, Red carpet, The Way Home)', textInput(p, 'label')));
+    });
+    $('add-epk-photo').onclick = function () { content.epk.photos.push({ img: '', label: '' }); markDirty(); redrawEpkPhotos(); };
+
     if (!content.timeline) content.timeline = [];
     var redrawTimeline = listEditor('timeline-ed', content.timeline, function (box, t) {
       box.appendChild(field('Year', textInput(t, 'year', { placeholder: '2026' })));

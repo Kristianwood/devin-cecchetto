@@ -10,8 +10,13 @@ built from the Claude Design project "Devin Cecchetto Portfolio".
   (Super Sonic Girl, Ships in the Night, So Obvious, Fantasy, OFF MY MIND!, Phase,
   the Christmas special) embedded from YouTube, with a link to her
   [Vevo channel](https://www.youtube.com/@DevinCecchettoVEVO)
-- **Acting** — credits (The Way Home, Wayward, Ginny & Georgia, …) + IMDb link
-- **Press** — interview features
+- **Listen** — Spotify artist player + streaming platform links
+- **Acting** — demo reel + credits (each linking to its IMDb page)
+- **Press** — interview features, linking to the press kit
+- **Press Kit** (`#presskit`) — downloadable photos, copy-paste bios, fast facts,
+  reel/IMDb/Vevo links and a résumé slot, for journalists and casting
+- **Newsletter** — signup forms on Listen and Contact appear once a form action
+  URL (e.g. Buttondown) is set in the admin panel
 - **About** — bio + portrait
 - **Contact** — email, YouTube / Vevo / Instagram / TikTok / Spotify / Apple Music
 

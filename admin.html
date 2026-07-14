@@ -139,6 +139,38 @@ textarea{resize:vertical}
     </section>
 
     <section class="card">
+      <h2>Listen &amp; newsletter</h2>
+      <label>Spotify artist link (powers the Listen page player)</label>
+      <input type="url" id="f-spotify" placeholder="https://open.spotify.com/artist/…">
+      <label>Newsletter sign-up form URL</label>
+      <input type="url" id="f-news-action" placeholder="https://buttondown.com/api/emails/embed-subscribe/yourname">
+      <p class="muted" style="margin:6px 0 0">Free setup: create an account at <a href="https://buttondown.com" target="_blank" rel="noopener">buttondown.com</a> (or Mailchimp), grab the embed form&rsquo;s action URL and paste it here. Until it&rsquo;s set, the sign-up boxes stay hidden on the site.</p>
+      <label>Newsletter blurb</label>
+      <textarea id="f-news-note" rows="2"></textarea>
+    </section>
+
+    <section class="card">
+      <h2>Press kit</h2>
+      <p class="hint">The page for journalists and casting — linked from Press and Contact. Photos download at full size.</p>
+      <label>Tagline</label>
+      <input type="text" id="f-epk-tagline">
+      <label>Résumé PDF link (optional — shows a Résumé button when set)</label>
+      <input type="url" id="f-epk-resume" placeholder="https://…/devin-cecchetto-resume.pdf">
+      <h3 style="margin:22px 0 0;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)">Fast facts</h3>
+      <div id="epk-facts-ed"></div>
+      <button class="small" id="add-epk-fact" style="margin-top:12px">+ Add fact</button>
+      <h3 style="margin:26px 0 0;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)">Downloadable photos</h3>
+      <div id="epk-photos-ed"></div>
+      <button class="small" id="add-epk-photo" style="margin-top:12px">+ Add photo</button>
+      <label>Short bio</label>
+      <textarea id="f-epk-short" rows="4"></textarea>
+      <label>Medium bio</label>
+      <textarea id="f-epk-med" rows="7"></textarea>
+      <label>Long bio</label>
+      <textarea id="f-epk-long" rows="11"></textarea>
+    </section>
+
+    <section class="card">
       <h2>News posts</h2>
       <p class="hint">Short updates — a show announcement, a release, behind-the-scenes. Newest first. The News tab only appears on the site when there is at least one post.</p>
       <div id="posts"></div>
@@ -229,6 +261,6 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<script src="admin.js?v=7"></script>
+<script src="admin.js?v=8"></script>
 </body>
 </html>

@@ -130,6 +130,35 @@
     ]
   ],
   "posts": [],
+  "spotify": "https://open.spotify.com/artist/2Rt3h2vXiM9AIDkJ0agHEp",
+  "newsletter": {
+    "action": "",
+    "note": "New music first — premieres, shows and the occasional note from Devin. No spam."
+  },
+  "epk": {
+    "tagline": "Singer-songwriter and actress, based between Toronto and Los Angeles.",
+    "facts": [
+      "Known for The Way Home (Hallmark), Wayward (Netflix) and Ginny & Georgia (Netflix)",
+      "Official music videos — “Super Sonic Girl”, “Ships in the Night”, “So Obvious” — with her own Vevo channel since 2025",
+      "Leading roles in four Lifetime features, incl. Don’t Sell My Baby",
+      "Trained in opera from age six; degree in musical theatre",
+      "A Christmas special EP with guest duets, released December 2025"
+    ],
+    "bioShort": "Devin Cecchetto is a singer-songwriter and actress from Toronto. On screen she is known for Hallmark’s The Way Home and Netflix’s Wayward and Ginny & Georgia; her dreamy, cinematic pop — “Ships in the Night”, “So Obvious”, “Super Sonic Girl” — lives on her own Vevo channel.",
+    "bioMed": "Devin Cecchetto is a singer-songwriter and actress based between Toronto and Los Angeles. She began singing in operas at age six, trained in musical theatre, and stepped on screen in Columbia Pictures’ The Craft: Legacy before series roles in The Parker Andersons / Amelia Parker and Netflix’s Ginny & Georgia. She is known to audiences as Teenage Evelyn Goodwin in Hallmark’s The Way Home and as Jess in Netflix’s Wayward, alongside leading roles in four Lifetime features. Her music — “Phase”, “OFF MY MIND!”, “Fantasy”, “Ships in the Night”, “So Obvious” and “Super Sonic Girl” — pairs dreamy, cinematic pop with official videos on her own Vevo channel.",
+    "bioLong": "Devin Cecchetto is a singer-songwriter and actress from Toronto’s east end, now based between Toronto and Los Angeles. Her first stages were opera houses: she sang children’s roles from the age of six, later training in the musical-theatre program at the Etobicoke School of the Arts and earning a degree in musical theatre.\n\nOn screen, she appeared in Columbia Pictures’ The Craft: Legacy before a ten-episode arc as Victoria Anderson in The Parker Andersons / Amelia Parker and an appearance in Netflix’s Ginny & Georgia. Leading roles followed in four Lifetime features — including the lead, Nicolette, in Don’t Sell My Baby — before two breakout parts: Teenage Evelyn Goodwin in Hallmark’s beloved time-travel drama The Way Home, and Jess in Netflix’s limited series Wayward.\n\nAs a recording artist, Devin writes dreamy, cinematic pop. Early singles “Phase”, “OFF MY MIND!” and “Fantasy” led to 2025’s “Ships in the Night” and “So Obvious”, and the launch of her own Vevo channel with “Super Sonic Girl” — followed by a Christmas special EP featuring duets with castmates and friends. Two new singles, with videos shot in Los Angeles, arrive in 2026.",
+    "photos": [
+      { "img": "assets/imdb-08.jpg", "label": "Headshot" },
+      { "img": "assets/imdb-22.jpg", "label": "Portrait" },
+      { "img": "assets/imdb-44.jpg", "label": "Portrait" },
+      { "img": "assets/imdb-47.jpg", "label": "Editorial" },
+      { "img": "assets/imdb-05.jpg", "label": "Red carpet" },
+      { "img": "assets/imdb-21.jpg", "label": "The Way Home" },
+      { "img": "assets/imdb-12.jpg", "label": "Wayward" },
+      { "img": "assets/imdb-48.jpg", "label": "Live" }
+    ],
+    "resumeUrl": ""
+  },
   "timeline": [
     {
       "year": "2004",
