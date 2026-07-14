@@ -20,6 +20,13 @@
     var m = /(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{6,})/.exec(u || '');
     return m ? m[1] : (/^[A-Za-z0-9_-]{11}$/.test(u || '') ? u : '');
   }
+  /* Vimeo (incl. unlisted /id/hash) or YouTube link -> embeddable player URL */
+  function embedSrc(u) {
+    var v = /vimeo\.com\/(?:video\/)?(\d+)(?:\/([a-zA-Z0-9]+))?/.exec(u || '');
+    if (v) return 'https://player.vimeo.com/video/' + v[1] + (v[2] ? '?h=' + v[2] + '&' : '?') + 'dnt=1';
+    var y = ytId(u);
+    return y ? 'https://www.youtube-nocookie.com/embed/' + y : '';
+  }
 
   /* ---- HOME montage ---- */
   function renderMontage() {
@@ -102,6 +109,26 @@
 
   /* ---- ACTING ---- */
   function renderActing() {
+    /* demo reel takes the hero spot when set; the wide photo is the fallback */
+    var mount = document.getElementById('reel-mount');
+    mount.innerHTML = '';
+    var reel = embedSrc(DATA.reel);
+    document.querySelector('.acting-hero').style.display = reel ? 'none' : '';
+    document.getElementById('cta-reel').style.display = reel ? '' : 'none';
+    if (reel) {
+      var block = el('div', { 'class': 'reel-block' });
+      block.appendChild(el('p', { 'class': 'kick' }, 'Demo reel'));
+      var frame = el('div', { 'class': 'frame' });
+      frame.appendChild(el('iframe', {
+        id: 'reel-iframe',
+        src: reel,
+        title: 'Demo reel',
+        allow: 'autoplay; fullscreen; picture-in-picture; encrypted-media',
+        allowfullscreen: ''
+      }));
+      block.appendChild(frame);
+      mount.appendChild(block);
+    }
     document.getElementById('acting-hero').style.backgroundImage = "url('" + DATA.actingHero + "')";
     var wrap = document.getElementById('credits');
     wrap.innerHTML = '';
@@ -207,6 +234,12 @@
       a.classList.toggle('active', a.getAttribute('href') === '#' + page);
     });
     if (page === 'home') renderMontage(); /* replay montage zoom */
+    /* arriving via the home Demo Reel button: start the reel (muted, per browser rules) */
+    if (page === 'acting' && window.__playReel) {
+      window.__playReel = false;
+      var fr = document.getElementById('reel-iframe');
+      if (fr) fr.src = fr.src + (fr.src.indexOf('?') > -1 ? '&' : '?') + 'autoplay=1&muted=1';
+    }
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', function () { if (DATA) show(pageFromHash()); });
@@ -236,6 +269,8 @@
     renderRest();
     show(pageFromHash());
   }
+
+  document.getElementById('cta-reel').addEventListener('click', function () { window.__playReel = true; });
 
   var draft = null;
   if (new URLSearchParams(location.search).has('preview')) {

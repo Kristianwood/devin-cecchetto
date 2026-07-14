@@ -329,6 +329,8 @@
 
     $('f-imdb').value = content.imdb || '';
     $('f-imdb').oninput = function (e) { content.imdb = e.target.value; markDirty(); };
+    $('f-reel').value = content.reel || '';
+    $('f-reel').oninput = function (e) { content.reel = e.target.value; markDirty(); };
     $('f-bio').value = content.bio || '';
     $('f-bio').oninput = function (e) { content.bio = e.target.value; markDirty(); };
     $('f-email').value = content.email || '';
