@@ -11,6 +11,7 @@
 
   var token = localStorage.getItem(TOKEN_KEY) || '';
   var content = null;           // working copy of content.json
+  var loadedContentSha = null;  // sha of content.json as this panel loaded it
   var canPush = false;          // token verified to have write access
   var library = [];             // [{path, sha}] photos in assets/ (repo)
   var uploads = {};             // path -> {b64, dataUrl} pending new photos
@@ -96,6 +97,7 @@
         throw new Error('NO_WRITE');
       }
       content = JSON.parse(b64DecodeUnicode(res[1].content));
+      loadedContentSha = res[1].sha;
       library = res[2].filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
         .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
       $('panel').style.display = 'block';
@@ -665,9 +667,10 @@
       var attempt = 0;
       function tryCommit() {
         return commitEntries(entries).catch(function (e) {
-          if (attempt++ < 3 && /fast forward|422/i.test(e.message)) {
-            log('site changed while publishing — retrying with the latest version (' + attempt + '/3)');
-            return tryCommit();
+          if (attempt++ < 5 && /fast forward|422/i.test(e.message)) {
+            var wait = 2000 + attempt * 1500;
+            log('site changed while publishing — retrying in ' + Math.round(wait / 1000) + 's with the latest version (' + attempt + '/5)');
+            return new Promise(function (res) { setTimeout(res, wait); }).then(tryCommit);
           }
           throw e;
         });
@@ -719,7 +722,20 @@
     $('btn-publish').disabled = true;
     status('Publishing…');
     log('— publish started —');
-    publishGitData().catch(function (e) {
+    /* stale-tab guard: warn if the site's content changed since this panel loaded */
+    gh('/contents/content.json?ref=' + BRANCH).then(function (f) {
+      if (loadedContentSha && f.sha !== loadedContentSha) {
+        var ok = confirm('Heads up — the site’s content has changed since this page was opened (another tab, device, or editor).\n\nPublishing now will OVERWRITE those newer changes with what you see in this panel.\n\nOK = publish anyway · Cancel = stop (then reload this page to start from the latest version)');
+        if (!ok) throw new Error('CANCELLED');
+      }
+      return publishGitData();
+    }).catch(function (e) {
+      if (e.message === 'CANCELLED') {
+        log('publish cancelled — reload the page to pick up the latest site content');
+        status('Publish cancelled', true);
+        $('btn-publish').disabled = false;
+        throw e;
+      }
       if (!/403/.test(e.message)) throw e;
       log('standard publish not allowed for this token (' + e.message + ') — retrying in compatible mode');
       return publishContentsApi();
@@ -730,16 +746,21 @@
       uploads = {};
       deletes = {};
       dirty = false;
-      /* refresh the photo library so new files carry their real shas */
-      return gh('/contents/assets?ref=' + BRANCH).then(function (files) {
-        library = files.filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
-          .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
-      }).catch(function () { /* non-fatal */ }).then(function () {
+      /* refresh the photo library and our content sha so the next publish
+         from this tab doesn't trip the stale-tab warning */
+      return Promise.all([
+        gh('/contents/assets?ref=' + BRANCH).then(function (files) {
+          library = files.filter(function (f) { return /\.(jpe?g|png|webp)$/i.test(f.name); })
+            .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
+        }),
+        gh('/contents/content.json?ref=' + BRANCH).then(function (f) { loadedContentSha = f.sha; })
+      ]).catch(function () { /* non-fatal */ }).then(function () {
         log('— published —');
-        status('Published! The live site updates in about a minute.');
+        status('Published! Live in ~1–2 min. (Browsers can show the old version for a few minutes — refresh with Cmd/Ctrl+Shift+R to see it sooner.)');
         $('btn-publish').disabled = false;
       });
     }).catch(function (e) {
+      if (e.message === 'CANCELLED') return;
       log('ERROR: ' + e.message);
       if (/403/.test(e.message)) {
         log('The token is not allowed to write to the site. Re-create it with');
