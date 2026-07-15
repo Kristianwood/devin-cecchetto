@@ -100,6 +100,7 @@
         .map(function (f) { return { path: 'assets/' + f.name, sha: f.sha }; });
       $('panel').style.display = 'block';
       renderAll();
+      setTab(location.hash.replace('#', '') || 'home');
       status('Loaded — no unpublished changes');
     }).catch(function (e) {
       $('login').style.display = 'block';
@@ -112,6 +113,24 @@
         : 'Could not load the site with this token (' + e.message + '). Check the token and try again.';
     });
   }
+  /* ---------- page tabs (mirror the site's menu) ---------- */
+  var TABS = ['home', 'videos', 'listen', 'acting', 'press', 'news', 'about', 'contact', 'presskit'];
+  function setTab(name) {
+    if (TABS.indexOf(name) < 0) name = 'home';
+    document.querySelectorAll('.admin-nav a').forEach(function (a) {
+      a.classList.toggle('on', a.getAttribute('data-tab') === name);
+    });
+    document.querySelectorAll('section.card[data-page]').forEach(function (s) {
+      s.classList.toggle('on', s.getAttribute('data-page') === name);
+    });
+    if ('#' + name !== location.hash) history.replaceState(null, '', '#' + name);
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('.admin-nav a').forEach(function (a) {
+    a.addEventListener('click', function () { setTab(a.getAttribute('data-tab')); });
+  });
+  window.addEventListener('hashchange', function () { setTab(location.hash.replace('#', '')); });
+
   $('token-save').addEventListener('click', function () {
     token = $('token-input').value.trim();
     if (!token) return;

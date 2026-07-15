@@ -19,6 +19,13 @@ h1,h2{font-family:'Cormorant Garamond',serif;font-weight:600}
 .topbar{position:sticky;top:0;z-index:50;background:rgba(247,242,236,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .topbar h1{margin:0;font-size:26px}
 .topbar .grow{flex:1}
+.admin-nav{flex-basis:100%;display:flex;gap:4px;padding-top:10px;overflow-x:auto;scrollbar-width:none}
+.admin-nav::-webkit-scrollbar{display:none}
+.admin-nav a{padding:7px 14px;border-radius:999px;font-size:12.5px;letter-spacing:.08em;color:var(--soft);cursor:pointer;white-space:nowrap;user-select:none}
+.admin-nav a:hover{background:#efe3d7}
+.admin-nav a.on{background:var(--ink);color:var(--bg)}
+section.card[data-page]{display:none}
+section.card[data-page].on{display:block}
 .status{font-size:12.5px;color:var(--soft);min-height:16px}
 button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 16px;transition:transform .2s}
 button:hover{transform:translateY(-1px)}
@@ -113,12 +120,23 @@ textarea{resize:vertical}
     <button id="btn-preview">Preview draft</button>
     <button class="primary" id="btn-publish">Publish to live site</button>
     <button class="small" id="btn-logout" title="Forget the token on this browser">Lock</button>
+    <nav class="admin-nav" id="admin-nav">
+      <a data-tab="home">Home</a>
+      <a data-tab="videos">Videos</a>
+      <a data-tab="listen">Listen</a>
+      <a data-tab="acting">Acting</a>
+      <a data-tab="press">Press</a>
+      <a data-tab="news">News</a>
+      <a data-tab="about">About</a>
+      <a data-tab="contact">Contact</a>
+      <a data-tab="presskit">Press Kit</a>
+    </nav>
   </div>
 
   <div class="wrap">
-    <p class="muted" style="margin:18px 4px 0">Edit anything below, use <b>Preview draft</b> to see it exactly as visitors will, then hit <b>Publish</b>. Photos: click any thumbnail to swap it, or upload &amp; crop your own in the photo picker.</p>
+    <p class="muted" style="margin:18px 4px 0">Pick a page above — it matches the site&rsquo;s own menu — edit, use <b>Preview draft</b> to see it exactly as visitors will, then hit <b>Publish</b>. Photos: click any thumbnail to swap it, or upload &amp; crop your own in the photo picker.</p>
 
-    <section class="card" id="sec-photos">
+    <section class="card" data-page="home" id="sec-photos">
       <div class="row" style="align-items:baseline">
         <h2 style="flex:1;margin:0 0 4px">Home page photo wall</h2>
         <button class="small tight" id="btn-rearrange">Rearrange</button>
@@ -127,7 +145,7 @@ textarea{resize:vertical}
       <div class="grid12" id="montage-grid"></div>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="videos">
       <h2>Music videos</h2>
       <p class="hint">The big cinematic sections at the top of the Videos page. When a video premieres, paste its YouTube link and tick &ldquo;Released&rdquo;.</p>
       <div id="projects"></div>
@@ -138,7 +156,7 @@ textarea{resize:vertical}
       <button class="small" id="add-release" style="margin-top:12px">+ Add released video</button>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="listen">
       <h2>Listen &amp; newsletter</h2>
       <label>Spotify artist link (powers the Listen page player)</label>
       <input type="url" id="f-spotify" placeholder="https://open.spotify.com/artist/…">
@@ -149,7 +167,7 @@ textarea{resize:vertical}
       <textarea id="f-news-note" rows="2"></textarea>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="presskit">
       <h2>Press kit</h2>
       <p class="hint">The page for journalists and casting — linked from Press and Contact. Photos download at full size.</p>
       <label>Tagline</label>
@@ -170,14 +188,14 @@ textarea{resize:vertical}
       <textarea id="f-epk-long" rows="11"></textarea>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="news">
       <h2>News posts</h2>
       <p class="hint">Short updates — a show announcement, a release, behind-the-scenes. Newest first. The News tab only appears on the site when there is at least one post.</p>
       <div id="posts"></div>
       <button class="small" id="add-post" style="margin-top:12px">+ New post</button>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="acting">
       <h2>Acting</h2>
       <label>Demo reel link (Vimeo or YouTube)</label>
       <input type="url" id="f-reel" placeholder="https://vimeo.com/…">
@@ -193,20 +211,13 @@ textarea{resize:vertical}
       <input type="url" id="f-imdb">
     </section>
 
-    <section class="card">
+    <section class="card" data-page="press">
       <h2>Press</h2>
       <div id="press"></div>
       <button class="small" id="add-press" style="margin-top:12px">+ Add article</button>
     </section>
 
-    <section class="card">
-      <h2>Timeline</h2>
-      <p class="hint">The career journey on the About page — each entry fades in as visitors scroll. Year, a short title, a sentence or two, and an optional production photo with caption.</p>
-      <div id="timeline-ed"></div>
-      <button class="small" id="add-timeline" style="margin-top:12px">+ Add timeline entry</button>
-    </section>
-
-    <section class="card">
+    <section class="card" data-page="about">
       <h2>About</h2>
       <div class="slot" style="margin-top:6px">
         <div class="thumb tall" id="about-portrait-thumb"></div>
@@ -217,7 +228,14 @@ textarea{resize:vertical}
       <textarea id="f-bio" rows="8"></textarea>
     </section>
 
-    <section class="card">
+    <section class="card" data-page="about">
+      <h2>Timeline</h2>
+      <p class="hint">The career journey on the About page — each entry fades in as visitors scroll. Year, a short title, a sentence or two, and an optional production photo with caption.</p>
+      <div id="timeline-ed"></div>
+      <button class="small" id="add-timeline" style="margin-top:12px">+ Add timeline entry</button>
+    </section>
+
+    <section class="card" data-page="contact">
       <h2>Contact &amp; links</h2>
       <label>Email</label>
       <input type="email" id="f-email">
@@ -261,6 +279,6 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<script src="admin.js?v=9"></script>
+<script src="admin.js?v=10"></script>
 </body>
 </html>
