@@ -438,10 +438,11 @@
          the painted wheels so they can spin while the body bobs */
       el.innerHTML = '<div class="flip">' +
         '<div class="shadow"></div>' +
+        '<div class="body">' +
         '<img src="' + CAR_URL + '" alt="">' +
-        '<div class="wheel" style="left:16.29%;top:71.24%;background-position:14.35% 75.53%"></div>' +
-        '<div class="wheel" style="left:73.29%;top:71.24%;background-position:74.62% 75.53%"></div>' +
-        '</div>';
+        '<div class="wheel" style="left:16.21%;top:73.67%;background-position:12.58% 83.86%"></div>' +
+        '<div class="wheel rear" style="left:73.21%;top:73.67%;background-position:75.71% 83.86%"></div>' +
+        '</div></div>';
       document.body.appendChild(el);
       var dir = -1; /* first pass drives left->right feels natural reading-wise */
       setInterval(function () {

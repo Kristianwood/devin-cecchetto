@@ -29,8 +29,10 @@ a:hover{color:#5f4636}
 #drive-car{position:fixed;bottom:6px;left:0;width:clamp(150px,20vw,240px);z-index:70;pointer-events:none;transform:translateX(-260px);will-change:transform}
 #drive-car .flip{position:relative;transform:none}
 #drive-car.drive-right .flip{transform:scaleX(-1)}
-#drive-car img{display:block;width:100%;height:auto;animation:carBob .34s ease-in-out infinite alternate}
-#drive-car .wheel{position:absolute;width:5.43%;aspect-ratio:1;border-radius:50%;background-image:url('assets/car.png');background-size:1842% auto;transform:translate(-50%,-50%)}
+#drive-car .body{position:relative;animation:carBob .34s ease-in-out infinite alternate}
+#drive-car img{display:block;width:100%;height:auto}
+#drive-car .wheel{position:absolute;width:9.71%;aspect-ratio:1;border-radius:50%;background-image:url('assets/car.png');background-size:1029.4% auto;transform:translate(-50%,-50%)}
+#drive-car .wheel.rear{-webkit-mask-image:linear-gradient(to bottom,transparent 0 38.5%,#000 40%);mask-image:linear-gradient(to bottom,transparent 0 38.5%,#000 40%)}
 #drive-car.drive-right .wheel,#drive-car.drive-left .wheel{animation:wheelSpin .5s linear infinite}
 #drive-car .shadow{position:absolute;left:3%;right:3%;bottom:-3.5%;height:12%;background:radial-gradient(ellipse at center,rgba(38,28,22,.32),rgba(38,28,22,0) 68%);filter:blur(1.5px)}
 @keyframes wheelSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
@@ -360,6 +362,6 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
   <p class="copyright">&copy; 2026 DEVIN CECCHETTO</p>
 </div>
 
-<script src="site.js?v=11"></script>
+<script src="site.js?v=12"></script>
 </body>
 </html>
