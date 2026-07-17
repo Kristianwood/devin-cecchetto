@@ -434,7 +434,14 @@
       var el = document.createElement('div');
       el.id = 'drive-car';
       el.setAttribute('aria-hidden', 'true');
-      el.innerHTML = '<div class="flip"><img src="' + CAR_URL + '" alt=""></div>';
+      /* wheel hubs are circular crops of the same image, layered exactly over
+         the painted wheels so they can spin while the body bobs */
+      el.innerHTML = '<div class="flip">' +
+        '<div class="shadow"></div>' +
+        '<img src="' + CAR_URL + '" alt="">' +
+        '<div class="wheel" style="left:16.29%;top:71.24%;background-position:14.35% 75.53%"></div>' +
+        '<div class="wheel" style="left:73.29%;top:71.24%;background-position:74.62% 75.53%"></div>' +
+        '</div>';
       document.body.appendChild(el);
       var dir = -1; /* first pass drives left->right feels natural reading-wise */
       setInterval(function () {

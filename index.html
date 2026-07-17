@@ -25,11 +25,15 @@ a:hover{color:#5f4636}
 @keyframes pageIn{from{opacity:0;transform:translateY(28px) scale(.988);filter:blur(7px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 @keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-12px)}}
 @keyframes petal{from{opacity:.95;transform:translate(-50%,-50%) scale(1) rotate(0deg)}to{opacity:0;transform:translate(calc(var(--dx) - 50%),calc(var(--dy) - 50%)) scale(.25) rotate(220deg)}}
-/* drive-by car (all devices) */
+/* drive-by car (all devices) — body bobs on its suspension, hubs spin */
 #drive-car{position:fixed;bottom:6px;left:0;width:clamp(150px,20vw,240px);z-index:70;pointer-events:none;transform:translateX(-260px);will-change:transform}
-#drive-car img{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 10px rgba(38,28,22,.28));animation:carBob .34s ease-in-out infinite alternate}
-#drive-car .flip{transform:none}
+#drive-car .flip{position:relative;transform:none}
 #drive-car.drive-right .flip{transform:scaleX(-1)}
+#drive-car img{display:block;width:100%;height:auto;animation:carBob .34s ease-in-out infinite alternate}
+#drive-car .wheel{position:absolute;width:5.43%;aspect-ratio:1;border-radius:50%;background-image:url('assets/car.png');background-size:1842% auto;transform:translate(-50%,-50%)}
+#drive-car.drive-right .wheel,#drive-car.drive-left .wheel{animation:wheelSpin .5s linear infinite}
+#drive-car .shadow{position:absolute;left:3%;right:3%;bottom:-3.5%;height:12%;background:radial-gradient(ellipse at center,rgba(38,28,22,.32),rgba(38,28,22,0) 68%);filter:blur(1.5px)}
+@keyframes wheelSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
 @keyframes carBob{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
 @keyframes driveR{from{transform:translateX(-260px)}to{transform:translateX(calc(100vw + 260px))}}
 @keyframes driveL{from{transform:translateX(calc(100vw + 260px))}to{transform:translateX(-260px)}}
@@ -356,6 +360,6 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
   <p class="copyright">&copy; 2026 DEVIN CECCHETTO</p>
 </div>
 
-<script src="site.js?v=10"></script>
+<script src="site.js?v=11"></script>
 </body>
 </html>
