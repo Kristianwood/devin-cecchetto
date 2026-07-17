@@ -274,6 +274,10 @@ textarea{resize:vertical}
       <div class="aspect-btns" id="aspect-btns"></div>
     </div>
     <div id="crop-stage"><canvas id="crop-canvas"></canvas></div>
+    <p class="muted" style="margin:8px 0 0;font-size:12px">
+      <label class="checkline" style="display:inline-flex;margin:0"><input type="checkbox" id="crop-guides" checked> Device guides</label>
+      &ensp;—&ensp;each outline is what stays visible when this photo fills the screen on that device (the rest is trimmed evenly from the edges).
+    </p>
     <div class="crop-controls">
       <span class="muted">Zoom</span>
       <input type="range" id="crop-zoom" min="100" max="400" value="100">
@@ -283,6 +287,6 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<script src="admin.js?v=12"></script>
+<script src="admin.js?v=13"></script>
 </body>
 </html>

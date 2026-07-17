@@ -525,6 +525,12 @@
     $('crop-zoom').value = 100;
     drawCrop();
   }
+  /* what stays visible per device when the photo fills the screen (cover = centered crop) */
+  var DEVICE_GUIDES = [
+    { label: 'Laptop', aspect: 16 / 10, color: '#e8d5c8' },
+    { label: 'iPad', aspect: 4 / 3, color: '#9ecfc4' },
+    { label: 'iPhone', aspect: 9 / 19.5, color: '#f0b967' }
+  ];
   function drawCrop() {
     var cv = $('crop-canvas'), cx = cv.getContext('2d');
     var s = cropState.cover * cropState.zoom;
@@ -533,7 +539,34 @@
     cropState.oy = Math.min(0, Math.max(cv.height - cropImg.naturalHeight * s, cropState.oy));
     cx.fillStyle = '#26201c'; cx.fillRect(0, 0, cv.width, cv.height);
     cx.drawImage(cropImg, cropState.ox, cropState.oy, cropImg.naturalWidth * s, cropImg.naturalHeight * s);
+    if (!$('crop-guides').checked) return;
+    DEVICE_GUIDES.forEach(function (g, gi) {
+      /* largest centered rect of the device's aspect that fits inside the crop */
+      var w, hgt;
+      if (cv.width / cv.height > g.aspect) { hgt = cv.height; w = hgt * g.aspect; }
+      else { w = cv.width; hgt = w / g.aspect; }
+      var x = (cv.width - w) / 2, y = (cv.height - hgt) / 2;
+      cx.save();
+      cx.strokeStyle = g.color;
+      cx.lineWidth = 2;
+      cx.setLineDash([10, 7]);
+      cx.strokeRect(x + 1, y + 1, w - 2, hgt - 2);
+      cx.setLineDash([]);
+      /* label chip pinned to the top edge of its outline */
+      cx.font = '600 15px Karla, sans-serif';
+      var tw = cx.measureText(g.label).width + 16;
+      var chipY = Math.max(2, y + 3) + gi * 27; /* stagger so labels never overlap */
+      cx.fillStyle = g.color;
+      cx.globalAlpha = .92;
+      cx.fillRect(x + w / 2 - tw / 2, chipY, tw, 22);
+      cx.globalAlpha = 1;
+      cx.fillStyle = '#26201c';
+      cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      cx.fillText(g.label, x + w / 2, chipY + 11);
+      cx.restore();
+    });
   }
+  $('crop-guides').addEventListener('change', drawCrop);
   $('crop-zoom').addEventListener('input', function (e) {
     var cv = $('crop-canvas');
     var old = cropState.cover * cropState.zoom;
