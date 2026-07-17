@@ -114,7 +114,7 @@
     mount.innerHTML = '';
     var reel = embedSrc(DATA.reel);
     document.querySelector('.acting-hero').style.display = reel ? 'none' : '';
-    document.getElementById('cta-reel').style.display = reel ? '' : 'none';
+    document.querySelectorAll('.cta-reel-btn').forEach(function (b) { b.style.display = reel ? '' : 'none'; });
     if (reel) {
       var block = el('div', { 'class': 'reel-block' });
       block.appendChild(el('p', { 'class': 'kick' }, 'Demo reel'));
@@ -348,9 +348,17 @@
     var h = (location.hash || '').replace('#', '').trim();
     return PAGES.indexOf(h) > -1 ? h : 'home';
   }
+  function nodeFor(p) {
+    /* while the DESERT COLD teaser runs, "home" is the landing page;
+       the photo-wall home stays archived in the DOM for later */
+    if (p === 'home' && DATA.teaserLanding) return document.getElementById('p-landing');
+    return document.getElementById('p-' + p);
+  }
   function show(page) {
+    document.getElementById('p-home').classList.remove('on');
+    document.getElementById('p-landing').classList.remove('on');
     PAGES.forEach(function (p) {
-      var node = document.getElementById('p-' + p);
+      var node = nodeFor(p);
       var on = p === page;
       if (on && !node.classList.contains('on')) {
         node.classList.remove('on');
@@ -361,7 +369,7 @@
     document.querySelectorAll('nav.main a').forEach(function (a) {
       a.classList.toggle('active', a.getAttribute('href') === '#' + page);
     });
-    if (page === 'home') renderMontage(); /* replay montage zoom */
+    if (page === 'home' && !DATA.teaserLanding) renderMontage(); /* replay montage zoom */
     /* arriving via the home Demo Reel button: start the reel (muted, per browser rules) */
     if (page === 'acting' && window.__playReel) {
       window.__playReel = false;
@@ -454,9 +462,196 @@
     }
   })();
 
+  /* ---- TEASER LANDING + canyon mini-game ---- */
+  function renderLanding() {
+    var bg = DATA.landingBg || (DATA.projects[1] && DATA.projects[1].img) || (DATA.projects[0] && DATA.projects[0].img) || DATA.montage[0];
+    document.getElementById('landing-bg').style.backgroundImage = "url('" + bg + "')";
+    document.getElementById('btn-peek').addEventListener('click', openCanyonGame);
+  }
+
+  var gameOpen = false;
+  function openCanyonGame() {
+    if (gameOpen) return;
+    gameOpen = true;
+    var modal = el('div', { 'class': 'game-modal' });
+    modal.innerHTML =
+      '<div class="game-top"><h2>The road to Desert Cold</h2>' +
+      '<span class="hint-t">Drag the car &middot; stay on the road</span>' +
+      '<button id="game-close">Close</button></div>' +
+      '<div class="game-wrap" id="game-wrap"><canvas id="game-canvas"></canvas><div class="game-toast" id="game-toast"></div></div>';
+    document.body.appendChild(modal);
+
+    var wrap = document.getElementById('game-wrap');
+    var canvas = document.getElementById('game-canvas');
+    var toastEl = document.getElementById('game-toast');
+    var ctx = canvas.getContext('2d');
+    var carImg = new Image();
+    carImg.src = 'assets/car.png';
+
+    /* winding canyon road, top to bottom (normalized control points) */
+    var CTRL = [[0.5, 0.05], [0.53, 0.11], [0.24, 0.2], [0.74, 0.31], [0.28, 0.43],
+                [0.73, 0.54], [0.3, 0.65], [0.68, 0.75], [0.4, 0.85], [0.5, 0.94]];
+    var path = [], rocks = [], roadHalf = 40, W = 0, H = 0, dpr = 1;
+    var progress = 0, dragging = false, started = false, won = false, raf = 0;
+
+    function catmull(p0, p1, p2, p3, t) {
+      var t2 = t * t, t3 = t2 * t;
+      return [
+        0.5 * (2*p1[0] + (p2[0]-p0[0])*t + (2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2 + (3*p1[0]-p0[0]-3*p2[0]+p3[0])*t3),
+        0.5 * (2*p1[1] + (p2[1]-p0[1])*t + (2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2 + (3*p1[1]-p0[1]-3*p2[1]+p3[1])*t3)
+      ];
+    }
+    function rebuild() {
+      W = wrap.clientWidth; H = wrap.clientHeight;
+      dpr = window.devicePixelRatio || 1;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      roadHalf = Math.max(30, Math.min(56, Math.min(W, H) * 0.075));
+      path = [];
+      var pts = CTRL.map(function (c) { return [c[0] * W, c[1] * H]; });
+      for (var i = 0; i < pts.length - 1; i++) {
+        var p0 = pts[Math.max(0, i-1)], p1 = pts[i], p2 = pts[i+1], p3 = pts[Math.min(pts.length-1, i+2)];
+        for (var t = 0; t < 1; t += 0.02) path.push(catmull(p0, p1, p2, p3, t));
+      }
+      path.push(pts[pts.length-1]);
+      /* scatter canyon rocks + cacti away from the road (deterministic) */
+      rocks = [];
+      var seed = 42;
+      function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+      for (var r = 0; r < 90; r++) {
+        var x = rnd() * W, y = rnd() * H, ok = true;
+        for (var k = 0; k < path.length; k += 6) {
+          var dx = x - path[k][0], dy = y - path[k][1];
+          if (dx*dx + dy*dy < Math.pow(roadHalf * 2.1, 2)) { ok = false; break; }
+        }
+        if (ok) rocks.push([x, y, 3 + rnd() * 14, rnd()]);
+      }
+    }
+    function nearestIdx(p, from, to) {
+      var best = from, bd = Infinity;
+      for (var i = Math.max(0, from); i <= Math.min(path.length - 1, to); i++) {
+        var dx = p[0] - path[i][0], dy = p[1] - path[i][1], d = dx*dx + dy*dy;
+        if (d < bd) { bd = d; best = i; }
+      }
+      return [best, Math.sqrt(bd)];
+    }
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('on');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(function () { toastEl.classList.remove('on'); }, 1600);
+    }
+    function draw() {
+      var g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#e6c193'); g.addColorStop(1, '#d3a06c');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      rocks.forEach(function (r) {
+        if (r[3] > 0.82) { /* cactus */
+          ctx.fillStyle = 'rgba(106,124,80,.75)';
+          ctx.fillRect(r[0] - 1.5, r[1] - r[2] * 0.7, 3, r[2] * 0.9);
+          ctx.fillRect(r[0] - r[2] * 0.32, r[1] - r[2] * 0.4, r[2] * 0.3, 2.4);
+        } else {
+          ctx.fillStyle = r[3] > 0.4 ? 'rgba(178,120,74,.45)' : 'rgba(140,90,55,.38)';
+          ctx.beginPath();
+          ctx.ellipse(r[0], r[1], r[2], r[2] * 0.62, r[3] * 3, 0, 7);
+          ctx.fill();
+        }
+      });
+      function strokePath(width, color, dash) {
+        ctx.beginPath();
+        ctx.moveTo(path[0][0], path[0][1]);
+        for (var i = 1; i < path.length; i++) ctx.lineTo(path[i][0], path[i][1]);
+        ctx.lineWidth = width; ctx.strokeStyle = color;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.setLineDash(dash || []);
+        ctx.stroke(); ctx.setLineDash([]);
+      }
+      strokePath(roadHalf * 2 + 7, '#8a6f5f');
+      strokePath(roadHalf * 2, '#3d332c');
+      strokePath(2, 'rgba(232,213,200,.85)', [13, 15]);
+      /* start + finish markers */
+      ctx.font = '600 11px Karla, sans-serif';
+      ctx.textAlign = 'center';
+      var s = path[0], f = path[path.length - 1];
+      ctx.fillStyle = 'rgba(247,242,236,.92)';
+      ctx.beginPath(); ctx.arc(f[0], f[1], roadHalf * 0.55, 0, 7); ctx.fill();
+      ctx.fillStyle = '#4a3c32';
+      ctx.fillText('END', f[0], f[1] + 3.5);
+      ctx.fillStyle = '#4a3c32';
+      ctx.fillText('START', s[0], s[1] - roadHalf - 10);
+      /* car */
+      var idx = Math.round(progress), p = path[idx];
+      var p2 = path[Math.min(path.length - 1, idx + 4)];
+      var ang = Math.atan2(p2[1] - p[1], p2[0] - p[0]);
+      var len = roadHalf * 2.9, hgt = len * 226 / 700;
+      ctx.save();
+      ctx.translate(p[0], p[1]);
+      /* side-view artwork faces left: mirror when heading rightward so
+         the car never appears upside down */
+      if (Math.cos(ang) > 0) { ctx.rotate(ang); ctx.scale(-1, 1); }
+      else { ctx.rotate(ang - Math.PI); }
+      if (carImg.complete) ctx.drawImage(carImg, -len / 2, -hgt / 2, len, hgt);
+      ctx.restore();
+      if (!started && !won) { /* pulsing grab hint */
+        var pulse = 1 + Math.sin(Date.now() / 300) * 0.12;
+        ctx.strokeStyle = 'rgba(247,242,236,.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(p[0], p[1], roadHalf * 1.5 * pulse, 0, 7); ctx.stroke();
+      }
+      raf = requestAnimationFrame(draw);
+    }
+    function pos(e) {
+      var r = canvas.getBoundingClientRect();
+      return [e.clientX - r.left, e.clientY - r.top];
+    }
+    canvas.addEventListener('pointerdown', function (e) {
+      var p = pos(e), car = path[Math.round(progress)];
+      var dx = p[0] - car[0], dy = p[1] - car[1];
+      if (Math.sqrt(dx*dx + dy*dy) < roadHalf * 2.4) {
+        dragging = true; started = true;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      e.preventDefault();
+    });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!dragging || won) return;
+      var p = pos(e);
+      var cur = Math.round(progress);
+      var res = nearestIdx(p, cur - 30, cur + 26);
+      if (res[1] > roadHalf * 1.3) {
+        dragging = false;
+        progress = 0; started = false;
+        wrap.classList.add('shake');
+        setTimeout(function () { wrap.classList.remove('shake'); }, 380);
+        toast('Off the road — back to the start!');
+        return;
+      }
+      progress = res[0];
+      if (progress >= path.length - 5) {
+        won = true; dragging = false;
+        toast('You made it ✦');
+        setTimeout(function () { location.href = 'desertcold.html'; }, 700);
+      }
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      canvas.addEventListener(ev, function () { dragging = false; });
+    });
+    window.addEventListener('resize', onResize);
+    function onResize() { var frac = progress / path.length; rebuild(); progress = Math.round(frac * path.length); }
+    document.getElementById('game-close').addEventListener('click', function () {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      modal.remove();
+      gameOpen = false;
+    });
+    rebuild();
+    draw();
+  }
+
   /* ---- Init: load content (draft preview from admin panel wins) ---- */
   function boot(content) {
     DATA = content;
+    renderLanding();
     renderVideos();
     renderListen();
     renderActing();
@@ -468,7 +663,9 @@
     show(pageFromHash());
   }
 
-  document.getElementById('cta-reel').addEventListener('click', function () { window.__playReel = true; });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('.cta-reel-btn')) window.__playReel = true;
+  });
 
   var draft = null;
   if (new URLSearchParams(location.search).has('preview')) {

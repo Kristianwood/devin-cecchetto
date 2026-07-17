@@ -328,6 +328,9 @@
       markDirty(); redrawPosts();
     };
 
+    $('f-teaser').checked = !!content.teaserLanding;
+    $('f-teaser').onchange = function (e) { content.teaserLanding = e.target.checked; markDirty(); };
+
     /* Listen & newsletter */
     if (!content.newsletter) content.newsletter = { action: '', note: '' };
     $('f-spotify').value = content.spotify || '';
