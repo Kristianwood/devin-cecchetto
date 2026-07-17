@@ -387,6 +387,65 @@
     }
   });
 
+  /* ---- Fun: the DESERT COLD red convertible (illustrated Buick, Devin driving) ----
+     Real mouse: the cursor becomes the car and faces wherever you're heading.
+     Everyone: the car drives across the screen every 5 seconds.
+     Debug: ?car=none disables, ?car=drive / ?car=cursor forces one part. */
+  (function funCar() {
+    var CAR_URL = 'assets/car.png'; /* faces LEFT */
+    var force = new URLSearchParams(location.search).get('car');
+    if (force === 'none') return;
+    var fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    /* cursor: two prerendered PNGs (left / right), swapped by mouse direction */
+    if ((fine || force === 'cursor') && force !== 'drive') {
+      var img = new Image();
+      img.onload = function () {
+        function cursorCss(flip) {
+          var w = 84, hgt = Math.max(1, Math.round(w * img.height / img.width));
+          var c = document.createElement('canvas');
+          c.width = w; c.height = hgt;
+          var x = c.getContext('2d');
+          if (flip) { x.translate(w, 0); x.scale(-1, 1); }
+          x.drawImage(img, 0, 0, w, hgt);
+          return '*{cursor:url(' + c.toDataURL('image/png') + ') ' + (w >> 1) + ' ' + Math.round(hgt * 0.55) + ', auto !important}';
+        }
+        var css = { left: cursorCss(false), right: cursorCss(true) };
+        var style = document.createElement('style');
+        document.head.appendChild(style);
+        var facing = '';
+        function face(dir) { if (facing !== dir) { facing = dir; style.textContent = css[dir]; } }
+        face('left');
+        var lastX = null, drift = 0;
+        document.addEventListener('mousemove', function (e) {
+          if (lastX !== null) {
+            drift = drift * 0.7 + (e.clientX - lastX);
+            if (drift > 6) face('right');
+            else if (drift < -6) face('left');
+          }
+          lastX = e.clientX;
+        }, { passive: true });
+      };
+      img.src = CAR_URL;
+    }
+
+    /* drive-by: every 5 seconds, alternating direction */
+    if (force !== 'cursor') {
+      var el = document.createElement('div');
+      el.id = 'drive-car';
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = '<div class="flip"><img src="' + CAR_URL + '" alt=""></div>';
+      document.body.appendChild(el);
+      var dir = -1; /* first pass drives left->right feels natural reading-wise */
+      setInterval(function () {
+        el.classList.remove('drive-right', 'drive-left');
+        void el.offsetWidth;
+        el.classList.add(dir > 0 ? 'drive-left' : 'drive-right');
+        dir = -dir;
+      }, 5000);
+    }
+  })();
+
   /* ---- Init: load content (draft preview from admin panel wins) ---- */
   function boot(content) {
     DATA = content;
