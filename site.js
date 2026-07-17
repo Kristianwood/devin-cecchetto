@@ -488,9 +488,9 @@
     var carImg = new Image();
     carImg.src = 'assets/car.png';
 
-    /* winding canyon road, top to bottom (normalized control points) */
-    var CTRL = [[0.5, 0.05], [0.53, 0.11], [0.24, 0.2], [0.74, 0.31], [0.28, 0.43],
-                [0.73, 0.54], [0.3, 0.65], [0.68, 0.75], [0.4, 0.85], [0.5, 0.94]];
+    /* winding canyon road, climbing left to right (normalized control points) */
+    var CTRL = [[0.06, 0.88], [0.13, 0.84], [0.2, 0.58], [0.31, 0.82], [0.43, 0.5],
+                [0.54, 0.76], [0.66, 0.4], [0.77, 0.62], [0.87, 0.3], [0.94, 0.13]];
     var path = [], rocks = [], roadHalf = 40, W = 0, H = 0, dpr = 1;
     var progress = 0, dragging = false, started = false, won = false, raf = 0;
 
