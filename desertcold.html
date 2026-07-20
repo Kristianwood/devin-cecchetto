@@ -20,6 +20,13 @@ video{display:block;width:100%;height:auto;background:#000}
 .unmute{position:absolute;right:14px;bottom:14px;font:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;background:rgba(14,10,8,.78);color:#e8d5c8;border:1px solid rgba(232,213,200,.35);border-radius:999px;padding:9px 18px;cursor:pointer}
 .note{margin:26px 0 0;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#8a6f5f;animation:riseUp 1s ease .9s both}
 .note a{color:#b9a49a;text-decoration:none;border-bottom:1px solid #4a3c32;padding-bottom:2px}
+.presave{margin:34px 0 0;max-width:520px;width:min(520px,94vw);background:rgba(247,242,236,.06);border:1px solid rgba(232,213,200,.28);border-radius:18px;padding:30px 32px;text-align:center;opacity:0;transform:translateY(26px);visibility:hidden;transition:opacity 2.4s ease, transform 2.4s cubic-bezier(.2,.8,.3,1), visibility 0s linear 2.4s}
+.presave.show{opacity:1;transform:none;visibility:visible;transition:opacity 2.4s ease, transform 2.4s cubic-bezier(.2,.8,.3,1)}
+.presave .pk{margin:0;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:#b9a49a}
+.presave h2{margin:10px 0 8px;font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:30px;color:#f7f2ec}
+.presave p{margin:0 0 20px;font-size:14px;font-weight:300;line-height:1.7;color:#d9c2b8}
+.presave a.btn{display:inline-block;padding:14px 34px;border-radius:999px;background:#e8d5c8;color:#26201c;font-size:12px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;text-decoration:none;transition:transform .4s}
+.presave a.btn:hover{transform:translateY(-4px)}
 </style>
 </head>
 <body>
@@ -29,6 +36,12 @@ video{display:block;width:100%;height:auto;background:#000}
   <video id="v" src="assets/teaser.mp4" autoplay muted loop playsinline></video>
   <button class="unmute" id="unmute">&#128266; Sound on</button>
 </div>
+<div class="presave" id="presave">
+  <p class="pk">Like what you heard?</p>
+  <h2>Be first in line</h2>
+  <p>Pre-save DESERT COLD and it lands in your library the moment it drops.</p>
+  <a class="btn" href="https://distrokid.com/hyperfollow/devincecchetto/desert-cold" target="_blank" rel="noopener">Pre-save Desert Cold</a>
+</div>
 <p class="note">First look &middot; the single &amp; video arrive soon &middot; <a href="./">devincecchetto.com</a></p>
 <script>
 var v = document.getElementById('v'), b = document.getElementById('unmute');
@@ -36,6 +49,17 @@ b.addEventListener('click', function () {
   v.muted = !v.muted;
   if (!v.muted) v.play();
   b.innerHTML = v.muted ? '&#128266; Sound on' : '&#128263; Mute';
+});
+/* reveal the pre-save box only after one full watch (the video loops):
+   catch either the last moments of playback or the loop wrapping around */
+var revealed = false, lastT = 0;
+v.addEventListener('timeupdate', function () {
+  if (!revealed && v.duration &&
+      (v.currentTime > v.duration - 0.45 || v.currentTime < lastT - 2)) {
+    revealed = true;
+    document.getElementById('presave').classList.add('show');
+  }
+  lastT = v.currentTime;
 });
 </script>
 </body>
