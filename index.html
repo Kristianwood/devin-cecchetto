@@ -247,14 +247,14 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
 <body>
 
 <nav class="main" id="nav">
-  <a href="#home">Home</a>
-  <a href="#videos">Videos</a>
-  <a href="#listen">Listen</a>
-  <a href="#acting">Acting</a>
-  <a href="#press">Press</a>
-  <a href="#news" style="display:none">News</a>
-  <a href="#about">About</a>
-  <a href="#contact">Contact</a>
+  <a href="#home" data-an="Nav → Home">Home</a>
+  <a href="#videos" data-an="Nav → Videos">Videos</a>
+  <a href="#listen" data-an="Nav → Listen">Listen</a>
+  <a href="#acting" data-an="Nav → Acting">Acting</a>
+  <a href="#press" data-an="Nav → Press">Press</a>
+  <a href="#news" data-an="Nav → News" style="display:none">News</a>
+  <a href="#about" data-an="Nav → About">About</a>
+  <a href="#contact" data-an="Nav → Contact">Contact</a>
 </nav>
 
 <!-- HOME -->
@@ -267,9 +267,9 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
       <p>Singer&ensp;&middot;&ensp;Songwriter&ensp;&middot;&ensp;Actress</p>
     </div>
     <div class="home-ctas">
-      <a class="btn-reel cta-reel-btn" href="#acting" id="cta-reel" style="display:none"><span class="play">&#9654;</span> Demo Reel</a>
-      <a class="btn-solid" href="#videos">Watch the videos</a>
-      <a class="btn-ghost" href="#acting">On screen</a>
+      <a class="btn-reel cta-reel-btn" href="#acting" data-an="CTA → Demo Reel" id="cta-reel" style="display:none"><span class="play">&#9654;</span> Demo Reel</a>
+      <a class="btn-solid" href="#videos" data-an="CTA → Watch the videos">Watch the videos</a>
+      <a class="btn-ghost" href="#acting" data-an="CTA → On screen">On screen</a>
     </div>
   </div>
 </div>
@@ -282,12 +282,12 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
     <p class="landing-kicker" style="animation:riseUp 1s ease .3s both">Devin Cecchetto &middot; the new single</p>
     <h1 class="landing-title" style="animation:riseUp 1.1s ease .5s both">DESERT<br>COLD</h1>
     <div style="animation:riseUp 1s ease .9s both">
-      <button class="btn-peek" id="btn-peek"><span class="spark">&#10022;</span>&ensp;Click for a sneak peek</button>
+      <button class="btn-peek" id="btn-peek" data-an="CTA → Sneak peek"><span class="spark">&#10022;</span>&ensp;Click for a sneak peek</button>
     </div>
     <div class="home-ctas" style="animation:riseUp 1s ease 1.15s both">
-      <a class="btn-reel cta-reel-btn" href="#acting"><span class="play">&#9654;</span> Demo Reel</a>
-      <a class="btn-solid" href="#videos">Watch the videos</a>
-      <a class="btn-ghost" href="#acting">On screen</a>
+      <a class="btn-reel cta-reel-btn" href="#acting" data-an="CTA → Demo Reel"><span class="play">&#9654;</span> Demo Reel</a>
+      <a class="btn-solid" href="#videos" data-an="CTA → Watch the videos">Watch the videos</a>
+      <a class="btn-ghost" href="#acting" data-an="CTA → On screen">On screen</a>
     </div>
   </div>
 </div>
@@ -329,7 +329,7 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
     <h2 class="epk-h">Bios <span class="epk-sub">copy &amp; paste freely</span></h2>
     <div id="epk-bios"></div>
     <h2 class="epk-h">Contact</h2>
-    <p style="margin:6px 0 0"><a class="email-btn" id="epk-email" style="animation:none" href="#"></a></p>
+    <p style="margin:6px 0 0"><a class="email-btn" id="epk-email" data-an="EPK → Email" style="animation:none" href="#"></a></p>
   </div>
 </div>
 
@@ -352,7 +352,7 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
     <h1 class="title">Press</h1>
     <div class="press-list" id="press-list"></div>
     <p style="text-align:center;margin-top:44px;animation:riseUp .9s ease .8s both">
-      <a href="#presskit" style="display:inline-block;padding:13px 30px;border-radius:999px;background:#d9c2b8;color:#4a3c32;font-size:12px;letter-spacing:.24em;text-transform:uppercase;transition:transform .4s">Press kit &amp; photos &rarr;</a>
+      <a href="#presskit" data-an="Press → Press kit" style="display:inline-block;padding:13px 30px;border-radius:999px;background:#d9c2b8;color:#4a3c32;font-size:12px;letter-spacing:.24em;text-transform:uppercase;transition:transform .4s">Press kit &amp; photos &rarr;</a>
     </p>
   </div>
 </div>
@@ -396,7 +396,7 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
   <h1>Let&rsquo;s make something.</h1>
   <p class="contact-note" id="contact-note"></p>
   <div style="animation:riseUp .9s ease .6s both">
-    <a class="email-btn" id="email-btn" href="#"></a>
+    <a class="email-btn" id="email-btn" data-an="Contact → Email" href="#"></a>
   </div>
   <div class="socials" id="socials"></div>
   <div id="contact-news" style="text-align:left"></div>
@@ -404,6 +404,6 @@ h1.title{margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;
   <p class="copyright">&copy; 2026 DEVIN CECCHETTO</p>
 </div>
 
-<script src="site.js?v=13"></script>
+<script src="site.js?v=14"></script>
 </body>
 </html>

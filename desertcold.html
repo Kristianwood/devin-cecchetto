@@ -58,8 +58,21 @@ v.addEventListener('timeupdate', function () {
       (v.currentTime > v.duration - 0.45 || v.currentTime < lastT - 2)) {
     revealed = true;
     document.getElementById('presave').classList.add('show');
+    if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'Teaser → watched fully', event: true });
   }
   lastT = v.currentTime;
+});
+/* analytics (enabled once a GoatCounter code is configured in the admin panel) */
+fetch('content.json').then(function (r) { return r.json(); }).then(function (c) {
+  if (!c.goatcounter) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + c.goatcounter + '.goatcounter.com/count');
+  document.head.appendChild(s);
+});
+document.querySelector('.presave a.btn').addEventListener('click', function () {
+  if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'Pre-save → Desert Cold', event: true });
 });
 </script>
 </body>

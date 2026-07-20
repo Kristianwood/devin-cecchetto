@@ -116,7 +116,7 @@
     });
   }
   /* ---------- page tabs (mirror the site's menu) ---------- */
-  var TABS = ['home', 'videos', 'listen', 'acting', 'press', 'news', 'about', 'contact', 'presskit'];
+  var TABS = ['home', 'videos', 'listen', 'acting', 'press', 'news', 'about', 'contact', 'presskit', 'stats'];
   function setTab(name) {
     if (TABS.indexOf(name) < 0) name = 'home';
     document.querySelectorAll('.admin-nav a').forEach(function (a) {
@@ -330,6 +330,32 @@
 
     $('f-teaser').checked = !!content.teaserLanding;
     $('f-teaser').onchange = function (e) { content.teaserLanding = e.target.checked; markDirty(); };
+
+    /* Site stats (GoatCounter) */
+    function renderStats() {
+      var code = (content.goatcounter || '').trim();
+      $('stats-setup').style.display = code ? 'none' : '';
+      var view = $('stats-view');
+      view.innerHTML = '';
+      if (!code) return;
+      var url = 'https://' + code + '.goatcounter.com';
+      view.appendChild(h('div', { 'class': 'row', style: 'margin-bottom:12px' }, [
+        h('a', { href: url, target: '_blank', rel: 'noopener', 'class': 'tight', style: 'font-weight:600' }, [document.createTextNode('Open the full dashboard ↗')]),
+        h('span', { 'class': 'muted grow', text: 'Live traffic + a ranked list of the most-clicked things under “Events”.' })
+      ]));
+      view.appendChild(h('iframe', {
+        src: url,
+        style: 'width:100%;height:640px;border:1px solid var(--line);border-radius:12px;background:#fff',
+        loading: 'lazy'
+      }));
+      view.appendChild(h('p', { 'class': 'muted', style: 'margin-top:8px' }, [document.createTextNode('Blank box? Sign in to GoatCounter in this browser, or enable “Allow adding it to a frame” in its Settings — the “Open the full dashboard” link above always works.')]));
+    }
+    $('f-goatcounter').value = content.goatcounter || '';
+    $('f-goatcounter').oninput = function (e) {
+      content.goatcounter = e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      markDirty(); renderStats();
+    };
+    renderStats();
 
     /* Listen & newsletter */
     if (!content.newsletter) content.newsletter = { action: '', note: '' };

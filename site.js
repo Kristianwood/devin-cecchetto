@@ -134,7 +134,7 @@
     wrap.innerHTML = '';
     DATA.credits.forEach(function (c, i) {
       var d = c[2]
-        ? el('a', { 'class': 'credit', href: c[2], target: '_blank', rel: 'noopener' })
+        ? el('a', { 'class': 'credit', href: c[2], target: '_blank', rel: 'noopener', 'data-an': 'IMDb → ' + c[0] })
         : el('div', { 'class': 'credit' });
       d.style.animationDelay = (0.45 + i * 0.09).toFixed(2) + 's';
       d.appendChild(el('h3', null, esc(c[0])));
@@ -152,7 +152,7 @@
     var wrap = document.getElementById('press-list');
     wrap.innerHTML = '';
     DATA.press.forEach(function (q, i) {
-      var a = el('a', { 'class': 'quote', href: q[2], target: '_blank', rel: 'noopener' });
+      var a = el('a', { 'class': 'quote', href: q[2], target: '_blank', rel: 'noopener', 'data-an': 'Press → ' + q[0] });
       a.style.animationDelay = (0.45 + i * 0.12).toFixed(2) + 's';
       a.appendChild(el('p', { 'class': 'q' }, '&ldquo;' + esc(q[1]) + '&rdquo;'));
       a.appendChild(el('p', { 'class': 'o' }, esc(q[0]) + ' &rarr;'));
@@ -262,7 +262,7 @@
     btns.innerHTML = '';
     (DATA.socials || []).forEach(function (s) {
       if (!s[1]) return;
-      btns.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener' }, esc(s[0])));
+      btns.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener', 'data-an': 'Listen → ' + s[0] }, esc(s[0])));
     });
     var news = document.getElementById('listen-news');
     news.innerHTML = '';
@@ -283,7 +283,7 @@
     if (DATA.vevo) links.push(['Vevo', DATA.vevo]);
     if (DATA.spotify) links.push(['Spotify', DATA.spotify]);
     links.forEach(function (l) {
-      acts.appendChild(el('a', { href: l[1], target: '_blank', rel: 'noopener' }, esc(l[0])));
+      acts.appendChild(el('a', { href: l[1], target: '_blank', rel: 'noopener', 'data-an': 'EPK → ' + l[0] }, esc(l[0])));
     });
     var facts = document.getElementById('epk-facts');
     facts.innerHTML = '';
@@ -291,7 +291,7 @@
     var ph = document.getElementById('epk-photos');
     ph.innerHTML = '';
     (k.photos || []).forEach(function (p) {
-      var a = el('a', { href: p.img, download: '', target: '_blank' });
+      var a = el('a', { href: p.img, download: '', target: '_blank', 'data-an': 'EPK photo → ' + (p.label || 'photo') });
       a.appendChild(el('div', { 'class': 'im', style: "background-image:url('" + p.img + "')" }));
       a.appendChild(el('span', { 'class': 'lb' }, esc(p.label || 'Photo') + ' &darr;'));
       ph.appendChild(a);
@@ -332,7 +332,7 @@
     soc.innerHTML = '';
     DATA.socials.forEach(function (s) {
       if (!s[1]) return;
-      soc.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener' }, esc(s[0])));
+      soc.appendChild(el('a', { href: s[1], target: '_blank', rel: 'noopener', 'data-an': 'Social → ' + s[0] }, esc(s[0])));
     });
     var vevo = document.getElementById('vevo-link');
     if (DATA.vevo) { vevo.href = DATA.vevo; vevo.parentElement.style.display = ''; }
@@ -370,6 +370,7 @@
       a.classList.toggle('active', a.getAttribute('href') === '#' + page);
     });
     if (page === 'home' && !DATA.teaserLanding) renderMontage(); /* replay montage zoom */
+    track('/' + page);
     /* arriving via the home Demo Reel button: start the reel (muted, per browser rules) */
     if (page === 'acting' && window.__playReel) {
       window.__playReel = false;
@@ -393,6 +394,36 @@
       document.body.appendChild(s);
       (function (n) { setTimeout(function () { n.remove(); }, 1500); })(s);
     }
+  });
+
+  /* ---- Analytics (GoatCounter — privacy-friendly, no cookies) ----
+     Enabled once a site code is set in the admin panel (content.goatcounter).
+     Pageviews are counted per section; clicks on anything tagged data-an
+     are counted as named events, which powers "most clicked" rankings. */
+  var anQueue = [];
+  function track(path, isEvent) {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: path, event: !!isEvent });
+    } else {
+      anQueue.push([path, !!isEvent]);
+    }
+  }
+  function initAnalytics() {
+    if (!DATA.goatcounter) return;
+    window.goatcounter = { no_onload: true };
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://gc.zgo.at/count.js';
+    s.setAttribute('data-goatcounter', 'https://' + DATA.goatcounter + '.goatcounter.com/count');
+    s.addEventListener('load', function () {
+      var q = anQueue.splice(0);
+      q.forEach(function (it) { track(it[0], it[1]); });
+    });
+    document.head.appendChild(s);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-an]');
+    if (t) track(t.getAttribute('data-an'), true);
   });
 
   /* ---- Fun: the DESERT COLD red convertible (illustrated Buick, Devin driving) ----
@@ -473,6 +504,7 @@
   function openCanyonGame() {
     if (gameOpen) return;
     gameOpen = true;
+    track('Game → started', true);
     var modal = el('div', { 'class': 'game-modal' });
     modal.innerHTML =
       '<div class="game-top"><h2>The road to Desert Cold</h2>' +
@@ -624,11 +656,13 @@
         wrap.classList.add('shake');
         setTimeout(function () { wrap.classList.remove('shake'); }, 380);
         toast('Off the road — back to the start!');
+        track('Game → off-road', true);
         return;
       }
       progress = res[0];
       if (progress >= path.length - 5) {
         won = true; dragging = false;
+        track('Game → completed', true);
         toast('You made it ✦');
         setTimeout(function () { location.href = 'desertcold.html'; }, 700);
       }
@@ -660,6 +694,7 @@
     renderTimeline();
     renderEPK();
     renderRest();
+    initAnalytics();
     show(pageFromHash());
   }
 

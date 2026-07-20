@@ -130,6 +130,7 @@ textarea{resize:vertical}
       <a data-tab="about">About</a>
       <a data-tab="contact">Contact</a>
       <a data-tab="presskit">Press Kit</a>
+      <a data-tab="stats">Stats</a>
     </nav>
   </div>
 
@@ -251,6 +252,22 @@ textarea{resize:vertical}
       <button class="small" id="add-social" style="margin-top:12px">+ Add link</button>
     </section>
 
+    <section class="card" data-page="stats">
+      <h2>Site stats</h2>
+      <p class="hint">Powered by <a href="https://www.goatcounter.com" target="_blank" rel="noopener">GoatCounter</a> — free, no cookies, privacy-friendly. It counts every page visit plus what people click: nav items, the sneak-peek button, canyon-game runs and completions, pre-save clicks, social &amp; streaming links, press articles, IMDb credit cards and press-kit photo downloads.</p>
+      <div id="stats-setup">
+        <p class="muted" style="margin:0 0 10px"><b>One-time setup (about 2 minutes):</b></p>
+        <ol style="font-size:14px;line-height:1.7;padding-left:20px;margin:0 0 16px">
+          <li>Create a free account at <a href="https://www.goatcounter.com/signup" target="_blank" rel="noopener">goatcounter.com/signup</a> — pick a code, e.g. <b>devincecchetto</b> (your dashboard becomes <i>code</i>.goatcounter.com)</li>
+          <li>Paste that code below and hit <b>Publish</b> — tracking starts for every visitor from then on</li>
+          <li>In GoatCounter&rsquo;s Settings, tick <i>&ldquo;Allow adding it to a frame&rdquo;</i> so the dashboard can show right here in this tab</li>
+        </ol>
+      </div>
+      <label>GoatCounter code</label>
+      <input type="text" id="f-goatcounter" placeholder="devincecchetto">
+      <div id="stats-view" style="margin-top:18px"></div>
+    </section>
+
     <div class="log" id="log"></div>
   </div>
 </div>
@@ -287,6 +304,6 @@ textarea{resize:vertical}
   </div>
 </div>
 
-<script src="admin.js?v=13"></script>
+<script src="admin.js?v=14"></script>
 </body>
 </html>
