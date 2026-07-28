@@ -498,6 +498,8 @@
     var bg = DATA.landingBg || (DATA.projects[1] && DATA.projects[1].img) || (DATA.projects[0] && DATA.projects[0].img) || DATA.montage[0];
     document.getElementById('landing-bg').style.backgroundImage = "url('" + bg + "')";
     document.getElementById('btn-peek').addEventListener('click', openCanyonGame);
+    var li = document.getElementById('landing-imdb');
+    if (DATA.imdb) { li.href = DATA.imdb; li.style.display = ''; }
   }
 
   var gameOpen = false;
